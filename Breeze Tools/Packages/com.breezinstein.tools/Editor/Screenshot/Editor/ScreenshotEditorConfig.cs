@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace BreezeTools
+namespace Breezinstein.Tools
 {
     public class ScreenshotEditorConfig : ScriptableObject
     {

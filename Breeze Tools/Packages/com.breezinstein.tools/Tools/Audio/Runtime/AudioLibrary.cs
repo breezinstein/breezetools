@@ -1,7 +1,6 @@
-using BreezeTools.Utils;
 using UnityEngine;
 
-namespace BreezeTools.Audio
+namespace Breezinstein.Tools.Audio
 {
     [CreateAssetMenu(fileName = "New Audio Library", menuName = "Breeze Tools/Audio/Create Audio Library")]
     public class AudioLibrary : ScriptableObject

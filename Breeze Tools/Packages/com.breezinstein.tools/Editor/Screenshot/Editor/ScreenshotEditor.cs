@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace BreezeTools
+namespace Breezinstein.Tools
 {
     public class ScreenshotEditor : EditorWindow
     {

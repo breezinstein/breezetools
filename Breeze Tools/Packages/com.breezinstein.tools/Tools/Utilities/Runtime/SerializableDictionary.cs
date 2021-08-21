@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace BreezeTools.Utils
+namespace Breezinstein.Tools
 {
     public class SerializableDictionary { }
 

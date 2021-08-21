@@ -1,16 +1,21 @@
 using System;
 using UnityEngine;
 
-namespace BreezeTools.Audio
+namespace Breezinstein.Tools.Audio
 {
+    [AddComponentMenu("Breeze's Tools/Audio/Audio Manager")]
     public class AudioManager : MonoBehaviour
     {
         public AudioLibrary audioLibrary;
-        public bool musicEnabled = true;
-        public bool effectsEnabled = true;
-        private static AudioSource effectsSource;
-        private static AudioSource musicSource;
+        public static bool MusicEnabled = true;
+        public static bool EffectsEnabled = true;
+        private AudioSource effectsSource;
+        private AudioSource musicSource;
         public static AudioManager Instance;
+
+        // Save key consts
+        private const string musicEnabledKey = "musicEnabled";
+        private const string effectsEnabledKey = "effectsEnabled";
 
         private void Awake()
         {
@@ -25,21 +30,44 @@ namespace BreezeTools.Audio
             DontDestroyOnLoad(this.gameObject);
             effectsSource = CreateAudioSource(AudioSourceType.effect);
             musicSource = CreateAudioSource(AudioSourceType.music);
+
+            // Load music and effects settings
+            LoadSettings();
+        }
+        private void LoadSettings()
+        {
+            MusicEnabled = Convert.ToBoolean(PlayerPrefs.GetInt(musicEnabledKey, 1));
+            EffectsEnabled = Convert.ToBoolean(PlayerPrefs.GetInt(effectsEnabledKey, 1));
+            UpdateSourceMute();
         }
 
+        private void SaveSettings()
+        {
+            PlayerPrefs.SetInt(musicEnabledKey, Convert.ToInt32(MusicEnabled));
+            PlayerPrefs.SetInt(effectsEnabledKey, Convert.ToInt32(EffectsEnabled));
+            PlayerPrefs.Save();
+            UpdateSourceMute();
+        }
+
+        private void UpdateSourceMute()
+        {
+            musicSource.mute = !MusicEnabled;
+            effectsSource.mute = !EffectsEnabled;
+        }
         public void EnableSource(AudioSourceType sourceType, bool enable)
         {
             switch (sourceType)
             {
                 case AudioSourceType.music:
-                    musicEnabled = enable;
+                    MusicEnabled = enable;
                     break;
                 case AudioSourceType.effect:
-                    effectsEnabled = enable;
+                    EffectsEnabled = enable;
                     break;
                 default:
                     break;
             }
+            SaveSettings();
         }
 
         public void ToggleSource(AudioSourceType sourceType)
@@ -47,14 +75,15 @@ namespace BreezeTools.Audio
             switch (sourceType)
             {
                 case AudioSourceType.music:
-                    musicEnabled = !musicEnabled;
+                    MusicEnabled = !MusicEnabled;
                     break;
                 case AudioSourceType.effect:
-                    effectsEnabled = !effectsEnabled;
+                    EffectsEnabled = !EffectsEnabled;
                     break;
                 default:
                     break;
             }
+            SaveSettings();
         }
         private AudioSource CreateAudioSource(AudioSourceType sourceType)
         {
@@ -66,11 +95,13 @@ namespace BreezeTools.Audio
                     source.name = "music source";
                     source.playOnAwake = true;
                     source.loop = true;
+                    
                     //TODO configure source;
                     break;
                 case AudioSourceType.effect:
                     source.name = "effects source";
                     source.playOnAwake = false;
+                    
                     //TODO configure source;
                     break;
                 default:
@@ -82,23 +113,23 @@ namespace BreezeTools.Audio
         public static void PlaySoundEffect(string clipName)
         {
             AudioItem item = GetAudioClip(clipName);
-            effectsSource.PlayOneShot(item.clip,item.volume);
+            Instance.effectsSource.PlayOneShot(item.clip, item.volume);
         }
 
         public static void PlayMusic(string clipName)
         {
             // TODO play random music
             AudioItem item = GetAudioClip(clipName);
-            musicSource.clip = item.clip;
-            musicSource.volume = item.volume;
-            musicSource.Play();
+            Instance.musicSource.clip = item.clip;
+            Instance.musicSource.volume = item.volume;
+            Instance.musicSource.Play();
         }
 
         public static void PlayRandomMusic()
         {
             // TODO play random music
-            musicSource.clip = GetRandomAudioClip();
-            musicSource.Play();
+            Instance.musicSource.clip = GetRandomAudioClip();
+            Instance.musicSource.Play();
         }
 
         //TODO

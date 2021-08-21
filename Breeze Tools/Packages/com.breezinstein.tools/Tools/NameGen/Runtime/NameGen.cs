@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace BreezeTools
+namespace Breezinstein.Tools
 {
     public static class NameGen
     {
