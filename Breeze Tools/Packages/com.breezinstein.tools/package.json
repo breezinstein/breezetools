@@ -19,6 +19,7 @@
     "url": "https://www.twincrownstudios.com"
   },
   "dependencies": {
-    "com.unity.textmeshpro": "3.0.0"
+    "com.unity.textmeshpro": "3.0.0",
+    "com.unity.nuget.newtonsoft-json": "2.0.0"
   }
 }

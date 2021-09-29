@@ -11,8 +11,11 @@ namespace Breezinstein.Tools.Audio
     [System.Serializable]
     public class AudioItem
     {
+        public AudioCategory category;
         public AudioClip clip;
-        [Range(0.0f,1.0f)]
+        [Range(0.0f, 1.0f)]
         public float volume = 1f;
     }
+
+    public enum AudioCategory { SFX, MUSIC }
 }

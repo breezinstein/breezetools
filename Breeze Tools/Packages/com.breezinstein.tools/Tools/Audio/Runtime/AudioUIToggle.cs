@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Breezinstein.Tools.Audio
 {
     [AddComponentMenu("Breeze's Tools/Audio/Audio UI Toggle")]
-    public class AudioUIButton : MonoBehaviour
+    public class AudioUIToggle : MonoBehaviour
     {
         [SerializeField]
         private AudioManager.AudioSourceType sourceType;
@@ -26,6 +26,7 @@ namespace Breezinstein.Tools.Audio
         public void ToggleAudio()
         {
             AudioManager.Instance.ToggleSource(sourceType);
+            Debug.Log($"{gameObject.name} pressed");
             UpdateUI();
         }
 
@@ -34,10 +35,13 @@ namespace Breezinstein.Tools.Audio
             switch (sourceType)
             {
                 case AudioManager.AudioSourceType.music:
-                    buttonIcon.sprite = AudioManager.MusicEnabled ? onSprite : offSprite;
+                    buttonIcon.sprite = AudioManager.Settings.MusicEnabled ? onSprite : offSprite;
                     break;
                 case AudioManager.AudioSourceType.effect:
-                    buttonIcon.sprite = AudioManager.EffectsEnabled ? onSprite : offSprite;
+                    buttonIcon.sprite = AudioManager.Settings.EffectsEnabled ? onSprite : offSprite;
+                    break;
+                case AudioManager.AudioSourceType.main:
+                    buttonIcon.sprite = AudioManager.Settings.MainEnabled ? onSprite : offSprite;
                     break;
                 default:
                     break;

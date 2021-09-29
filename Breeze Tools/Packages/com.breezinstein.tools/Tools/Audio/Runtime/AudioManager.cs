@@ -1,21 +1,39 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 namespace Breezinstein.Tools.Audio
 {
     [AddComponentMenu("Breeze's Tools/Audio/Audio Manager")]
     public class AudioManager : MonoBehaviour
     {
+        private static AudioSettings settings;
+        public static AudioSettings Settings
+        {
+            get
+            {
+                if (settings == null)
+                {
+                    settings = AudioSettings.Load();
+                }
+
+                return settings;
+            }
+            set
+            {
+                settings = value;
+                AudioSettings.Save(settings);
+            }
+        }
+
         public AudioLibrary audioLibrary;
-        public static bool MusicEnabled = true;
-        public static bool EffectsEnabled = true;
         private AudioSource effectsSource;
         private AudioSource musicSource;
-        public static AudioManager Instance;
 
-        // Save key consts
-        private const string musicEnabledKey = "musicEnabled";
-        private const string effectsEnabledKey = "effectsEnabled";
+        public AudioMixer audioMixer;
+
+        public static AudioManager Instance;
 
         private void Awake()
         {
@@ -32,59 +50,62 @@ namespace Breezinstein.Tools.Audio
             musicSource = CreateAudioSource(AudioSourceType.music);
 
             // Load music and effects settings
-            LoadSettings();
-        }
-        private void LoadSettings()
-        {
-            MusicEnabled = Convert.ToBoolean(PlayerPrefs.GetInt(musicEnabledKey, 1));
-            EffectsEnabled = Convert.ToBoolean(PlayerPrefs.GetInt(effectsEnabledKey, 1));
-            UpdateSourceMute();
+            AudioSettings.Load();
         }
 
-        private void SaveSettings()
+        private void OnSceneWasLoaded(Scene arg0, LoadSceneMode arg1)
         {
-            PlayerPrefs.SetInt(musicEnabledKey, Convert.ToInt32(MusicEnabled));
-            PlayerPrefs.SetInt(effectsEnabledKey, Convert.ToInt32(EffectsEnabled));
-            PlayerPrefs.Save();
-            UpdateSourceMute();
+            UpdateVolumes();
         }
 
-        private void UpdateSourceMute()
+        public void UpdateVolumes()
         {
-            musicSource.mute = !MusicEnabled;
-            effectsSource.mute = !EffectsEnabled;
+            audioMixer.SetFloat("MainVolume", Mathf.Log10(settings.MainVolume) * 20);
+            audioMixer.FindMatchingGroups("BGM")[0].audioMixer.SetFloat("BGMVolume", Mathf.Log10(settings.MusicVolume) * 20);
+            audioMixer.FindMatchingGroups("SFX")[0].audioMixer.SetFloat("SFXVolume", Mathf.Log10(settings.EffectsVolume) * 20);
         }
-        public void EnableSource(AudioSourceType sourceType, bool enable)
+
+        public void SetVolume(AudioSourceType sourceType, float volume)
         {
+            volume = Mathf.Clamp(volume, 0.0001f, 1);
             switch (sourceType)
             {
                 case AudioSourceType.music:
-                    MusicEnabled = enable;
+                    Settings.MusicVolume = volume;
                     break;
                 case AudioSourceType.effect:
-                    EffectsEnabled = enable;
+                    Settings.EffectsVolume = volume;
+                    break;
+                case AudioSourceType.main:
+                    Settings.MainVolume = volume;
                     break;
                 default:
                     break;
             }
-            SaveSettings();
+            AudioSettings.Save(settings);
+            UpdateVolumes();
         }
+
 
         public void ToggleSource(AudioSourceType sourceType)
         {
             switch (sourceType)
             {
                 case AudioSourceType.music:
-                    MusicEnabled = !MusicEnabled;
+                    Settings.MusicEnabled = !Settings.MusicEnabled;
                     break;
                 case AudioSourceType.effect:
-                    EffectsEnabled = !EffectsEnabled;
+                    Settings.EffectsEnabled = !Settings.EffectsEnabled;
+                    break;
+                case AudioSourceType.main:
+                    Settings.MainEnabled = !Settings.MainEnabled;
                     break;
                 default:
                     break;
             }
-            SaveSettings();
+            UpdateVolumes();
         }
+
         private AudioSource CreateAudioSource(AudioSourceType sourceType)
         {
             AudioSource source = new GameObject().AddComponent<AudioSource>();
@@ -95,14 +116,12 @@ namespace Breezinstein.Tools.Audio
                     source.name = "music source";
                     source.playOnAwake = true;
                     source.loop = true;
-                    
-                    //TODO configure source;
+                    source.outputAudioMixerGroup = audioMixer.FindMatchingGroups("BGM")[0];
                     break;
                 case AudioSourceType.effect:
                     source.name = "effects source";
                     source.playOnAwake = false;
-                    
-                    //TODO configure source;
+                    source.outputAudioMixerGroup = audioMixer.FindMatchingGroups("SFX")[0];
                     break;
                 default:
                     break;
@@ -128,14 +147,29 @@ namespace Breezinstein.Tools.Audio
         public static void PlayRandomMusic()
         {
             // TODO play random music
-            Instance.musicSource.clip = GetRandomAudioClip();
+            Instance.musicSource.clip = GetRandomAudioClip(AudioCategory.MUSIC);
             Instance.musicSource.Play();
         }
 
-        //TODO
-        private static AudioClip GetRandomAudioClip()
+        public static void StopMusic()
         {
-            throw new NotImplementedException();
+            Instance.musicSource.Stop();
+        }
+
+
+        private static AudioClip GetRandomAudioClip(AudioCategory category)
+        {
+            //Get all clips of that category
+            List<AudioItem> clips = new List<AudioItem>();
+            foreach (var item in Instance.audioLibrary.clips)
+            {
+                if (item.Value.category == category)
+                {
+                    clips.Add(item.Value);
+                }
+            }
+
+            return clips[UnityEngine.Random.Range(0, clips.Count)].clip;
         }
 
         private static AudioItem GetAudioClip(string clipName)
@@ -148,7 +182,10 @@ namespace Breezinstein.Tools.Audio
         public enum AudioSourceType
         {
             music = 0,
-            effect
+            effect,
+            main
         }
+
+
     }
 }
