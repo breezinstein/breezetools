@@ -4,6 +4,14 @@
       "version": "file:com.breezinstein.tools",
       "depth": 0,
       "source": "embedded",
+      "dependencies": {
+        "com.unity.textmeshpro": "3.0.0"
+      }
+    },
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
       "dependencies": {}
     },
     "com.unity.collab-proxy": {
@@ -57,7 +65,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "3.0.4",
+      "version": "3.0.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {

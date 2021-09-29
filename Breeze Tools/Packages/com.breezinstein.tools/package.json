@@ -17,5 +17,8 @@
     "name": "breezinstein",
     "email": "breezinstein@breezinstein.com",
     "url": "https://www.twincrownstudios.com"
+  },
+  "dependencies": {
+    "com.unity.textmeshpro": "3.0.0"
   }
 }
