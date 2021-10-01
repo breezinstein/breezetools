@@ -26,7 +26,6 @@ namespace Breezinstein.Tools.Audio
         public void ToggleAudio()
         {
             AudioManager.Instance.ToggleSource(sourceType);
-            Debug.Log($"{gameObject.name} pressed");
             UpdateUI();
         }
 
