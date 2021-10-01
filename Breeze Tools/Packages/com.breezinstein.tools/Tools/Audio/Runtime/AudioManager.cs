@@ -67,7 +67,7 @@ namespace Breezinstein.Tools.Audio
 
         public void SetVolume(AudioSourceType sourceType, float volume)
         {
-            volume = Mathf.Clamp(volume, 0.0001f, 1);
+            volume = Mathf.Clamp(volume, AudioSettings.minVolume, 1f);
             switch (sourceType)
             {
                 case AudioSourceType.music:

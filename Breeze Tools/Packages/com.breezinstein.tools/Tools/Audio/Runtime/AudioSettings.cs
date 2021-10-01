@@ -7,6 +7,7 @@ namespace Breezinstein.Tools.Audio
     public class AudioSettings
     {
         private static string saveKey = "AudioSettings";
+        public const float minVolume = 0.0001f;
         public bool MusicEnabled = true;
         public bool EffectsEnabled = true;
         public bool MainEnabled = true;
@@ -15,9 +16,9 @@ namespace Breezinstein.Tools.Audio
         private float effectsVolume = 1;
         private float mainVolume = 1;
 
-        public float MusicVolume { get => MusicEnabled ? musicVolume : 0.0001f; set => musicVolume = value; }
-        public float EffectsVolume { get => EffectsEnabled ? effectsVolume : 0.0001f; set => effectsVolume = value; }
-        public float MainVolume { get => MainEnabled ? mainVolume : 0.0001f; set => mainVolume = value; }
+        public float MusicVolume { get => MusicEnabled ? musicVolume : minVolume; set => musicVolume = value; }
+        public float EffectsVolume { get => EffectsEnabled ? effectsVolume : minVolume; set => effectsVolume = value; }
+        public float MainVolume { get => MainEnabled ? mainVolume : minVolume; set => mainVolume = value; }
 
         public static AudioSettings Load()
         {
