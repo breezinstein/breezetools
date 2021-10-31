@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "97d15d8d",
         "name": "com.TwinCrownStudios.BreezeToolsDemo",
-        "processId": 4958,
+        "processId": 22699,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -36,6 +36,18 @@
             "deviceId": "97d15d8d",
             "name": "com.TwinCrownStudios.BreezeToolsDemo",
             "processId": 4958,
+            "exited": false
+        },
+        {
+            "deviceId": "97d15d8d",
+            "name": "com.TwinCrownStudios.BreezeToolsDemo",
+            "processId": 21845,
+            "exited": false
+        },
+        {
+            "deviceId": "97d15d8d",
+            "name": "com.TwinCrownStudios.BreezeToolsDemo",
+            "processId": 22699,
             "exited": false
         }
     ],
