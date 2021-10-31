@@ -2,6 +2,7 @@
 using System;
 using System.Text;
 using Newtonsoft.Json;
+using System.IO;
 
 public static class BreezeHelper
 {
@@ -16,7 +17,34 @@ public static class BreezeHelper
         return JsonConvert.DeserializeObject<T>(toDeSerialize);
     }
 
-	/// <summary>
+    const string fileExtension = "json";
+
+    public static bool FileExists(string fileName)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, $"{fileName}.{fileExtension}");
+        return File.Exists(filePath);
+    }
+    public static string LoadFile(string fileName)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, $"{fileName}.{fileExtension}");
+        if (File.Exists(filePath))
+        {
+            return File.ReadAllText(filePath);
+        }
+        else
+        {
+            Debug.Log($"File: {filePath} does not exist");
+            return null;
+        }
+    }
+
+    public static void SaveFile(string fileName, string fileContent)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, $"{fileName}.{fileExtension}");
+        File.WriteAllText(filePath, fileContent);
+    }
+
+    /// <summary>
     ///Fibonacci number at n in sequence
     /// </summary>
     /// <param name="n">nth number</param>

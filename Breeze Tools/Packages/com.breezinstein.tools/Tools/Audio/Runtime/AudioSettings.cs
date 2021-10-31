@@ -8,40 +8,41 @@ namespace Breezinstein.Tools.Audio
     {
         private static string saveKey = "AudioSettings";
         public const float minVolume = 0.0001f;
+
         public bool MusicEnabled = true;
         public bool EffectsEnabled = true;
         public bool MainEnabled = true;
 
-        private float musicVolume = 1;
-        private float effectsVolume = 1;
-        private float mainVolume = 1;
+        protected float musicVolume = 1f;
+        protected float effectsVolume = 1f;
+        protected float mainVolume = 1f;
 
-        public float MusicVolume { get => MusicEnabled ? musicVolume : minVolume; set => musicVolume = value; }
-        public float EffectsVolume { get => EffectsEnabled ? effectsVolume : minVolume; set => effectsVolume = value; }
-        public float MainVolume { get => MainEnabled ? mainVolume : minVolume; set => mainVolume = value; }
+        public float MusicVolume { get => MusicEnabled ? musicVolume : minVolume; set => musicVolume = MusicEnabled ? value : musicVolume; }
+        public float EffectsVolume { get => EffectsEnabled ? effectsVolume : minVolume; set => effectsVolume = EffectsEnabled ? value : effectsVolume; }
+        public float MainVolume { get => MainEnabled ? mainVolume : minVolume; set => mainVolume = MainEnabled ? value : mainVolume; }
 
         public static AudioSettings Load()
         {
-            AudioSettings settings = null;
-            if (PlayerPrefs.HasKey(saveKey))
+            AudioSettings settings = new AudioSettings();
+
+            if (BreezeHelper.FileExists(saveKey))
             {
-                settings = new AudioSettings();
-                settings = PlayerPrefs.GetString(saveKey).Deserialize<AudioSettings>();
+                settings = BreezeHelper.LoadFile(saveKey).Deserialize<AudioSettings>();
             }
-            if (settings == null)
+            else
             {
+                Debug.Log("The file " + saveKey + "does not exists");
                 settings = new AudioSettings();
-                AudioSettings.Save(settings);
             }
+            Debug.Log("Audio Settings Loaded");
             return settings;
         }
 
         public static void Save(AudioSettings settings)
         {
-            string saveSerialized = BreezeHelper.Serialize<AudioSettings>(settings);
-            PlayerPrefs.SetString(saveKey, saveSerialized);
-            PlayerPrefs.Save();
+            BreezeHelper.SaveFile(saveKey, BreezeHelper.Serialize(settings));
         }
+
         public void Reset()
         {
             MusicEnabled = true;

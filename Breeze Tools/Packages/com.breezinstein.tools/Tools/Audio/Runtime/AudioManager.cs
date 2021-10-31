@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-using UnityEngine.SceneManagement;
 
 namespace Breezinstein.Tools.Audio
 {
@@ -46,23 +45,18 @@ namespace Breezinstein.Tools.Audio
                 Destroy(this.gameObject);
             }
             DontDestroyOnLoad(this.gameObject);
+
             effectsSource = CreateAudioSource(AudioSourceType.effect);
             musicSource = CreateAudioSource(AudioSourceType.music);
-
-            // Load music and effects settings
-            AudioSettings.Load();
-        }
-
-        private void OnSceneWasLoaded(Scene arg0, LoadSceneMode arg1)
-        {
             UpdateVolumes();
-        }
 
+        }
+        
         public void UpdateVolumes()
         {
-            audioMixer.SetFloat("MainVolume", Mathf.Log10(settings.MainVolume) * 20);
-            audioMixer.FindMatchingGroups("BGM")[0].audioMixer.SetFloat("BGMVolume", Mathf.Log10(settings.MusicVolume) * 20);
-            audioMixer.FindMatchingGroups("SFX")[0].audioMixer.SetFloat("SFXVolume", Mathf.Log10(settings.EffectsVolume) * 20);
+            audioMixer.SetFloat("MainVolume", Mathf.Log10(Settings.MainVolume) * 20);
+            audioMixer.FindMatchingGroups("BGM")[0].audioMixer.SetFloat("BGMVolume", Mathf.Log10(Settings.MusicVolume) * 20);
+            audioMixer.FindMatchingGroups("SFX")[0].audioMixer.SetFloat("SFXVolume", Mathf.Log10(Settings.EffectsVolume) * 20);
         }
 
         public void SetVolume(AudioSourceType sourceType, float volume)
@@ -82,7 +76,7 @@ namespace Breezinstein.Tools.Audio
                 default:
                     break;
             }
-            AudioSettings.Save(settings);
+            AudioSettings.Save(Settings);
             UpdateVolumes();
         }
 
@@ -103,6 +97,7 @@ namespace Breezinstein.Tools.Audio
                 default:
                     break;
             }
+            AudioSettings.Save(Settings);
             UpdateVolumes();
         }
 
@@ -131,12 +126,14 @@ namespace Breezinstein.Tools.Audio
 
         public static void PlaySoundEffect(string clipName)
         {
+            Instance.UpdateVolumes();
             AudioItem item = GetAudioClip(clipName);
             Instance.effectsSource.PlayOneShot(item.clip, item.volume);
         }
 
         public static void PlayMusic(string clipName)
         {
+            Instance.UpdateVolumes();
             // TODO play random music
             AudioItem item = GetAudioClip(clipName);
             Instance.musicSource.clip = item.clip;
@@ -146,6 +143,7 @@ namespace Breezinstein.Tools.Audio
 
         public static void PlayRandomMusic()
         {
+            Instance.UpdateVolumes();
             // TODO play random music
             Instance.musicSource.clip = GetRandomAudioClip(AudioCategory.MUSIC);
             Instance.musicSource.Play();
