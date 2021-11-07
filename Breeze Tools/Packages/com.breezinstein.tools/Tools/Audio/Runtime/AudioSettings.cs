@@ -33,6 +33,7 @@ namespace Breezinstein.Tools.Audio
             {
                 Debug.Log("The file " + saveKey + "does not exists");
                 settings = new AudioSettings();
+                settings.Reset();
             }
             Debug.Log("Audio Settings Loaded");
             return settings;
