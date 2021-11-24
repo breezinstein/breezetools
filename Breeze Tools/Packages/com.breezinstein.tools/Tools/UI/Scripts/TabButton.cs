@@ -35,7 +35,10 @@ namespace Breezinstein.Tools.UI
         void Start()
         {
             background = GetComponent<Image>();
-            tabGroup.Subscribe(this);
+            if (tabGroup != null)
+            {
+                tabGroup.Subscribe(this);
+            }
         }
 
         public void Select()

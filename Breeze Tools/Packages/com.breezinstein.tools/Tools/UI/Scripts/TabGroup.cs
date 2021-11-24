@@ -8,19 +8,34 @@ namespace Breezinstein.Tools.UI
     public class TabGroup : MonoBehaviour
     {
         public List<TabButton> tabButtons;
-        public Sprite tabIdle;
-        public Sprite tabHover;
-        public Sprite tabActive;
-        public TabButton selectedTab;
-        public List<GameObject> objectsToSwap;
+        public List<GameObject> pages;
 
+        public Color tabIdleColor;
+        public Color tabHoverColor;
+        public Color tabSelectedColor;
+        public TabButton selectedTab;
+
+        public void Start()
+        {
+            // Select first tab
+            foreach (TabButton tabButton in tabButtons)
+            {
+                if (tabButton.transform.GetSiblingIndex() == 0)
+                { OnTabSelected(tabButton); }
+            }
+        }
         public void Subscribe(TabButton button)
         {
-            if (tabButtons == null)
-            {
-                tabButtons = new List<TabButton>();
-            }
+            //if (tabButtons == null)
+            //{
+            //    tabButtons = new List<TabButton>();
+            //}
+            //tabButtons.Add(button);
+
             tabButtons.Add(button);
+            // Sort by order in hierarchy
+            tabButtons.Sort((x, y) => x.transform.GetSiblingIndex().CompareTo(y.transform.GetSiblingIndex()));
+            ResetTabs();
         }
 
         public void OnTabEnter(TabButton button)
@@ -28,7 +43,7 @@ namespace Breezinstein.Tools.UI
             ResetTabs();
             if (selectedTab == null || button != selectedTab)
             {
-                button.background.sprite = tabHover;
+                button.background.color = tabHoverColor;
             }
         }
 
@@ -39,25 +54,18 @@ namespace Breezinstein.Tools.UI
 
         public void OnTabSelected(TabButton button)
         {
-            if(selectedTab != null)
+            if (selectedTab != null)
             {
                 selectedTab.Deselect();
             }
             selectedTab = button;
             selectedTab.Select();
             ResetTabs();
-            button.background.sprite = tabActive;
+            button.background.color = tabSelectedColor;
             int index = button.transform.GetSiblingIndex();
-            for (int i = 0; i < objectsToSwap.Count; i++)
+            for (int i = 0; i < pages.Count; i++)
             {
-                if (i == index)
-                {
-                    objectsToSwap[i].SetActive(true);
-                }
-                else
-                {
-                    objectsToSwap[i].SetActive(false);
-                }
+                pages[i].SetActive(i == index);
             }
         }
 
@@ -65,10 +73,26 @@ namespace Breezinstein.Tools.UI
         {
             foreach (TabButton button in tabButtons)
             {
-                if (selectedTab != null && button == selectedTab) { continue; }
-                button.background.sprite = tabIdle;
+                if (selectedTab != null && button == selectedTab)
+                {
+                    continue;
+                }
+                button.background.color = tabIdleColor;
             }
         }
 
+        public void NextTab()
+        {
+            int currentIndex = selectedTab.transform.GetSiblingIndex();
+            int nextIndex = currentIndex < tabButtons.Count - 1 ? currentIndex + 1 : tabButtons.Count - 1;
+            OnTabSelected(tabButtons[nextIndex]);
+        }
+
+        public void PreviousTab()
+        {
+            int currentIndex = selectedTab.transform.GetSiblingIndex();
+            int previousIndex = currentIndex > 0 ? currentIndex - 1 : 0;
+            OnTabSelected(tabButtons[previousIndex]);
+        }
     }
 }
