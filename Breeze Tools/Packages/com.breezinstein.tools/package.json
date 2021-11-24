@@ -1,6 +1,6 @@
 {
   "name": "com.breezinstein.tools",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "displayName": "Breeze's Tools",
   "description": "A collection helper tools for building games in Unity",
   "unity": "2021.1",
