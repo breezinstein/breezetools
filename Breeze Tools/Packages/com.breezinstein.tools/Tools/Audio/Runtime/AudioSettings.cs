@@ -35,7 +35,7 @@ namespace Breezinstein.Tools.Audio
                 settings = new AudioSettings();
                 settings.Reset();
             }
-            Debug.Log("Audio Settings Loaded");
+            
             return settings;
         }
 

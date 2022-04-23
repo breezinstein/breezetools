@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: fb43cbda3ae98094a95e22e994c61e52
+labels:
+- Angle
+- Animated
+- Circle
+- Editor
+- Effect
+- Layout
+- Offset
+- Radial
+- Ui
+timeCreated: 1485777409
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: dc9572677a7f7e44ea6e226d39de8b75, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
