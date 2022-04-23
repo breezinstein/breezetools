@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Breezinstein.Tools.Inventory
@@ -8,9 +6,9 @@ namespace Breezinstein.Tools.Inventory
     public class InventoryItemData : ScriptableObject
     {
         public string id;
-        public string itemName;
+        public string itemName = "New Item";
         public float value;
         public string description;
-        public Sprite icon;
+        public Sprite icon = null;
     }
 }
