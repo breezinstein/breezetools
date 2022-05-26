@@ -1,0 +1,16 @@
+{
+    "name": "com.breezinstein.tools.experimental",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f6e14e7f41352ce458310dc3c74dd351"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
