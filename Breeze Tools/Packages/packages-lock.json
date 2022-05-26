@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "com.breezinstein.tools": {
-      "version": "file:com.breezinstein.tools",
+      "version": "file:../../com.breezinstein.tools/",
       "depth": 0,
-      "source": "embedded",
+      "source": "local",
       "dependencies": {
         "com.unity.textmeshpro": "3.0.0",
         "com.unity.nuget.newtonsoft-json": "2.0.0"
