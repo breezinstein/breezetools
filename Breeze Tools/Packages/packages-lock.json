@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.breezinstein.tools": {
-      "version": "file:../../com.breezinstein.tools/",
+      "version": "file:L:/Unity Projects/Repos/breezetools/com.breezinstein.tools",
       "depth": 0,
       "source": "local",
       "dependencies": {
