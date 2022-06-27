@@ -62,11 +62,12 @@ namespace Breezinstein.Tools
                     //Apply Rotations
                     foreach (Transform t in selectedTransforms)
                     {
-                        Vector3 rot = t.rotation.eulerAngles;
-                        if (rotX) { rot.x = Random.Range(minRot.x, maxRot.x); }
-                        if (rotY) { rot.y = Random.Range(minRot.y, maxRot.y); }
-                        if (rotZ) { rot.z = Random.Range(minRot.z, maxRot.z); }
-                        t.rotation = Quaternion.Euler(rot);
+                        Vector3 newRotation = new Vector3(Random.Range(minRot.x, maxRot.x), Random.Range(minRot.y, maxRot.y), Random.Range(minRot.z, maxRot.z));
+                        Vector3 originalRotation = t.rotation.eulerAngles;
+                        Quaternion newQuat = Quaternion.identity;
+
+                        newQuat.eulerAngles = new Vector3(rotX?newRotation.x:originalRotation.x,rotY?newRotation.y:originalRotation.y,rotZ?newRotation.z:originalRotation.z);
+                        t.rotation = newQuat;
                     }
                 }
                 //EditorGUILayout.EndToggleGroup();
