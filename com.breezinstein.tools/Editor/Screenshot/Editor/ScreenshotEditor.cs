@@ -2,8 +2,12 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
+using UnityEngine.Rendering;
 
 namespace Breezinstein.Tools
 {
@@ -125,7 +129,13 @@ namespace Breezinstein.Tools
                     TakeScreenshot();
                 }
             }
-
+            if (GUILayout.Button("Take GameView Screenshot", GUILayout.Width(200), GUILayout.Height(50)))
+            {
+                if (PrepareScreenshot())
+                {
+                    TakeGameViewScreenshot();
+                }
+            }
             if (EditorGUI.EndChangeCheck())
             {
                 //Record that there has been a change.
@@ -154,6 +164,10 @@ namespace Breezinstein.Tools
             }
 
             return true;
+        }
+        private void TakeGameViewScreenshot()
+        {
+            ScreenCapture.CaptureScreenshot(Path.Combine(config.SaveFolderPath, GetScreenshotFileNameFromDateTime()));
         }
 
         private void TakeScreenshot()
