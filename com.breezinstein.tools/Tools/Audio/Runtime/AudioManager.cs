@@ -7,30 +7,33 @@ namespace Breezinstein.Tools.Audio
     [AddComponentMenu("Breeze's Tools/Audio/Audio Manager")]
     public class AudioManager : MonoBehaviour
     {
-        private static AudioSettings settings;
+        private static AudioSettings m_Settings;
         public static AudioSettings Settings
         {
             get
             {
-                if (settings == null)
+                if (m_Settings == null)
                 {
-                    settings = AudioSettings.Load();
+                    m_Settings = AudioSettings.Load();
                 }
 
-                return settings;
+                return m_Settings;
             }
             set
             {
-                settings = value;
-                AudioSettings.Save(settings);
+                m_Settings = value;
+                AudioSettings.Save(m_Settings);
             }
         }
 
-        public AudioLibrary audioLibrary;
-        private AudioSource effectsSource;
-        private AudioSource musicSource;
+        public AudioLibrary AudioLibrary;
 
-        public AudioMixer audioMixer;
+        private AudioSource m_EffectsSource;
+        private AudioSource m_MusicSource;
+
+        [SerializeField] private AudioMixer m_AudioMixer;
+        private AudioMixerGroup m_MusicGroup;
+        private AudioMixerGroup m_EffectsGroup;
 
         public static AudioManager Instance;
 
@@ -46,31 +49,34 @@ namespace Breezinstein.Tools.Audio
             }
             DontDestroyOnLoad(this.gameObject);
 
-            effectsSource = CreateAudioSource(AudioSourceType.effect);
-            musicSource = CreateAudioSource(AudioSourceType.music);
+            m_MusicGroup = m_AudioMixer.FindMatchingGroups("BGM")[0];
+            m_EffectsGroup = m_AudioMixer.FindMatchingGroups("SFX")[0];
+
+            m_EffectsSource = CreateAudioSource(AudioSourceType.EFFECT);
+            m_MusicSource = CreateAudioSource(AudioSourceType.MUSIC);
             UpdateVolumes();
 
         }
         
         public void UpdateVolumes()
         {
-            audioMixer.SetFloat("MainVolume", Mathf.Log10(Settings.MainVolume) * 20);
-            audioMixer.FindMatchingGroups("BGM")[0].audioMixer.SetFloat("BGMVolume", Mathf.Log10(Settings.MusicVolume) * 20);
-            audioMixer.FindMatchingGroups("SFX")[0].audioMixer.SetFloat("SFXVolume", Mathf.Log10(Settings.EffectsVolume) * 20);
+            m_AudioMixer.SetFloat("MainVolume", Mathf.Log10(Settings.MainVolume) * 20);
+            m_MusicGroup.audioMixer.SetFloat("BGMVolume", Mathf.Log10(Settings.MusicVolume) * 20);
+            m_EffectsGroup.audioMixer.SetFloat("SFXVolume", Mathf.Log10(Settings.EffectsVolume) * 20);
         }
 
         public void SetVolume(AudioSourceType sourceType, float volume)
         {
-            volume = Mathf.Clamp(volume, AudioSettings.minVolume, 1f);
+            volume = Mathf.Clamp(volume, AudioSettings.MIN_VOLUME, 1f);
             switch (sourceType)
             {
-                case AudioSourceType.music:
+                case AudioSourceType.MUSIC:
                     Settings.MusicVolume = volume;
                     break;
-                case AudioSourceType.effect:
+                case AudioSourceType.EFFECT:
                     Settings.EffectsVolume = volume;
                     break;
-                case AudioSourceType.main:
+                case AudioSourceType.MAIN:
                     Settings.MainVolume = volume;
                     break;
                 default:
@@ -85,13 +91,13 @@ namespace Breezinstein.Tools.Audio
         {
             switch (sourceType)
             {
-                case AudioSourceType.music:
+                case AudioSourceType.MUSIC:
                     Settings.MusicEnabled = !Settings.MusicEnabled;
                     break;
-                case AudioSourceType.effect:
+                case AudioSourceType.EFFECT:
                     Settings.EffectsEnabled = !Settings.EffectsEnabled;
                     break;
-                case AudioSourceType.main:
+                case AudioSourceType.MAIN:
                     Settings.MainEnabled = !Settings.MainEnabled;
                     break;
                 default:
@@ -107,16 +113,16 @@ namespace Breezinstein.Tools.Audio
             source.transform.parent = transform;
             switch (sourceType)
             {
-                case AudioSourceType.music:
+                case AudioSourceType.MUSIC:
                     source.name = "music source";
                     source.playOnAwake = true;
                     source.loop = true;
-                    source.outputAudioMixerGroup = audioMixer.FindMatchingGroups("BGM")[0];
+                    source.outputAudioMixerGroup = m_MusicGroup;
                     break;
-                case AudioSourceType.effect:
+                case AudioSourceType.EFFECT:
                     source.name = "effects source";
                     source.playOnAwake = false;
-                    source.outputAudioMixerGroup = audioMixer.FindMatchingGroups("SFX")[0];
+                    source.outputAudioMixerGroup = m_EffectsGroup;
                     break;
                 default:
                     break;
@@ -128,30 +134,29 @@ namespace Breezinstein.Tools.Audio
         {
             Instance.UpdateVolumes();
             AudioItem item = GetAudioClip(clipName);
-            Instance.effectsSource.PlayOneShot(item.clip, item.volume);
+            Instance.m_EffectsSource.PlayOneShot(item.clip, item.volume);
         }
 
         public static void PlayMusic(string clipName)
         {
             Instance.UpdateVolumes();
-            // TODO play random music
             AudioItem item = GetAudioClip(clipName);
-            Instance.musicSource.clip = item.clip;
-            Instance.musicSource.volume = item.volume;
-            Instance.musicSource.Play();
+            Instance.m_MusicSource.clip = item.clip;
+            Instance.m_MusicSource.volume = item.volume;
+            Instance.m_MusicSource.Play();
         }
 
         public static void PlayRandomMusic()
         {
             Instance.UpdateVolumes();
             // TODO play random music
-            Instance.musicSource.clip = GetRandomAudioClip(AudioCategory.MUSIC);
-            Instance.musicSource.Play();
+            Instance.m_MusicSource.clip = GetRandomAudioClip(AudioCategory.MUSIC);
+            Instance.m_MusicSource.Play();
         }
 
         public static void StopMusic()
         {
-            Instance.musicSource.Stop();
+            Instance.m_MusicSource.Stop();
         }
 
 
@@ -159,7 +164,7 @@ namespace Breezinstein.Tools.Audio
         {
             //Get all clips of that category
             List<AudioItem> clips = new List<AudioItem>();
-            foreach (var item in Instance.audioLibrary.clips)
+            foreach (var item in Instance.AudioLibrary.clips)
             {
                 if (item.Value.category == category)
                 {
@@ -173,15 +178,22 @@ namespace Breezinstein.Tools.Audio
         private static AudioItem GetAudioClip(string clipName)
         {
             AudioItem audioItem;
-            Instance.audioLibrary.clips.TryGetValue(clipName, out audioItem);
-            return audioItem;
+            if (Instance.AudioLibrary.clips.TryGetValue(clipName, out audioItem))
+            {
+                return audioItem;
+            }
+            else
+            {
+                Debug.LogError("Audio clip not found: " + clipName);
+                return null;
+            }
         }
 
         public enum AudioSourceType
         {
-            music = 0,
-            effect,
-            main
+            MUSIC = 0,
+            EFFECT,
+            MAIN
         }
 
 

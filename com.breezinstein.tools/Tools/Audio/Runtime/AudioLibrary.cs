@@ -17,5 +17,5 @@ namespace Breezinstein.Tools.Audio
         public float volume = 1f;
     }
 
-    public enum AudioCategory { SFX, MUSIC }
+    public enum AudioCategory { EFFECT, MUSIC }
 }

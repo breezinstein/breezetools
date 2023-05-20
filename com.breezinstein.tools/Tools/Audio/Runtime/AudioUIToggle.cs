@@ -33,13 +33,13 @@ namespace Breezinstein.Tools.Audio
         {
             switch (sourceType)
             {
-                case AudioManager.AudioSourceType.music:
+                case AudioManager.AudioSourceType.MUSIC:
                     buttonIcon.sprite = AudioManager.Settings.MusicEnabled ? onSprite : offSprite;
                     break;
-                case AudioManager.AudioSourceType.effect:
+                case AudioManager.AudioSourceType.EFFECT:
                     buttonIcon.sprite = AudioManager.Settings.EffectsEnabled ? onSprite : offSprite;
                     break;
-                case AudioManager.AudioSourceType.main:
+                case AudioManager.AudioSourceType.MAIN:
                     buttonIcon.sprite = AudioManager.Settings.MainEnabled ? onSprite : offSprite;
                     break;
                 default:

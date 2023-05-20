@@ -33,19 +33,19 @@ namespace Breezinstein.Tools.Audio
         {
             switch (sourceType)
             {
-                case AudioManager.AudioSourceType.music:
+                case AudioManager.AudioSourceType.MUSIC:
                     if (AudioManager.Settings.MusicEnabled)
                     {
                         slider.value = AudioManager.Settings.MusicVolume;
                     }
                     break;
-                case AudioManager.AudioSourceType.effect:
+                case AudioManager.AudioSourceType.EFFECT:
                     if (AudioManager.Settings.EffectsEnabled)
                     {
                         slider.value = AudioManager.Settings.EffectsVolume;
                     }
                     break;
-                case AudioManager.AudioSourceType.main:
+                case AudioManager.AudioSourceType.MAIN:
                     if (AudioManager.Settings.MainEnabled)
                     {
                         slider.value = AudioManager.Settings.MainVolume;
