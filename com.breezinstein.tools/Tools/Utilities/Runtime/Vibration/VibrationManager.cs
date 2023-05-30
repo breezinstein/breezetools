@@ -6,23 +6,24 @@ namespace Breezinstein.Tools
     public class VibrationManager
     {
         public static bool VibrateEnabled = true;
+        private static IVibrator Vibration;
 
         public static bool CanVibrate()
         {
-            if(HasVibrator() == false)
+            if (HasVibrator() == false)
             {
                 Debug.Log("Vibration Error: No vibration on device");
                 return false;
             }
-            if (Vibration.initialized == false)
+            if (Vibration.IsInitialized() == false)
             {
                 Vibration.Init();
             }
-            if(VibrateEnabled == false)
+            if (VibrateEnabled == false)
             {
                 return false;
             }
-            return (Vibration.initialized && VibrateEnabled);
+            return (Vibration.IsInitialized() && VibrateEnabled);
         }
         public static bool HasVibrator()
         {
@@ -31,6 +32,15 @@ namespace Breezinstein.Tools
 
         public static void Init()
         {
+#if UNITY_EDITOR
+            Vibration = new DummyVibrator();
+#elif UNITY_IOS          
+            Vibration = new iOSVibrator();
+#elif UNITY_ANDROID
+            Vibration = new AndroidVibrator();
+#else
+            Vibration = new DummyVibrator();
+#endif
             Vibration.Init();
         }
 
