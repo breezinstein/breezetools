@@ -27,6 +27,12 @@ namespace Breezinstein.Tools
         }
         public static bool HasVibrator()
         {
+            //handle null reference exception
+            if (Vibration == null)
+            {
+             //try to init
+                Init();
+            }
             return Vibration.HasVibrator();
         }
 
