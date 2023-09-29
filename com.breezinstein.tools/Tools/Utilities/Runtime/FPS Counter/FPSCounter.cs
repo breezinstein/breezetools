@@ -66,9 +66,9 @@ namespace Breezinstein.Tools
 
                 //display the min, current and max fps on different lines in the same string
                 m_StringBuilder.Clear();
-                m_StringBuilder.AppendLine(string.Format(display + "CUR", m_CurrentFps));
-                m_StringBuilder.AppendLine(string.Format(display + "MIN", m_MinFps));
-                m_StringBuilder.AppendLine(string.Format(display + "MAX", m_MaxFps));
+                m_StringBuilder.AppendLine(string.Format(display + " CUR", m_CurrentFps));
+                m_StringBuilder.AppendLine(string.Format(display + " MIN", m_MinFps));
+                m_StringBuilder.AppendLine(string.Format(display + " MAX", m_MaxFps));
                 m_Text.text = m_StringBuilder.ToString();
 
             }
