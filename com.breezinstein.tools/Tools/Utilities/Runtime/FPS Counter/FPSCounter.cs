@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -19,6 +20,8 @@ namespace Breezinstein.Tools
         private TextMeshProUGUI m_Text;
         private float currentTime;
         private readonly StringBuilder m_StringBuilder = new StringBuilder(16);
+        private float[] previousFPS = new float[16];
+        private int previousFPSIndex = 0;
 
         private void Start()
         {
@@ -38,20 +41,34 @@ namespace Breezinstein.Tools
                 m_FpsAccumulator = 0;
                 m_FpsNextPeriod = currentTime + fpsMeasurePeriod;
 
-                if (m_CurrentFps < m_MinFps)
+                previousFPS[previousFPSIndex] = m_CurrentFps;
+                previousFPSIndex++;
+                // loop index if above 16
+                if(previousFPSIndex >= 16)
                 {
-                    m_MinFps = m_CurrentFps;
+                    previousFPSIndex = 0;
                 }
-                if (m_CurrentFps > m_MaxFps)
+
+                // calculate min and max fps
+                m_MinFps = previousFPS[0];
+                m_MaxFps = previousFPS[0];
+                for(int i = 1; i < 16; i++)
                 {
-                    m_MaxFps = m_CurrentFps;
+                    if (previousFPS[i] < m_MinFps)
+                    {
+                        m_MinFps = previousFPS[i];
+                    }
+                    if (previousFPS[i] > m_MaxFps)
+                    {
+                        m_MaxFps = previousFPS[i];
+                    }
                 }
 
                 //display the min, current and max fps on different lines in the same string
                 m_StringBuilder.Clear();
-                m_StringBuilder.AppendLine(string.Format(display, m_CurrentFps));
-                m_StringBuilder.AppendLine(string.Format(display, m_MinFps));
-                m_StringBuilder.AppendLine(string.Format(display, m_MaxFps));
+                m_StringBuilder.AppendLine(string.Format(display + "CUR", m_CurrentFps));
+                m_StringBuilder.AppendLine(string.Format(display + "MIN", m_MinFps));
+                m_StringBuilder.AppendLine(string.Format(display + "MAX", m_MaxFps));
                 m_Text.text = m_StringBuilder.ToString();
 
             }
