@@ -4,31 +4,44 @@ using UnityEngine;
 
 namespace Breezinstein.Tools.UI
 {
+    // A script that rotates an object over time in the x, y, and z directions
     public class RotateOverTime : MonoBehaviour
     {
-        [SerializeField] bool x;
-        [SerializeField] bool y;
-        [SerializeField] bool z = true;
-        [SerializeField] float speedMultiplier = 1f;
+        [SerializeField] bool x; // Should the object rotate around the x-axis?
+        [SerializeField] bool y; // Should the object rotate around the y-axis?
+        [SerializeField] bool z = true; // Should the object rotate around the z-axis?
+        [SerializeField] float speedMultiplier = 1f; // Multiplier for the rotation speed
 
+        private float xRot; // Current rotation around x-axis
+        private float yRot; // Current rotation around y-axis
+        private float zRot; // Current rotation around z-axis
+        private float speed = 100f; // Base speed of rotation
+
+        // Update is called once per frame
         void Update()
         {
+            // If none of the rotation axes are checked, do nothing
+            if (!x && !y && !z) return;
+
+            // Calculate rotation amounts for each axis
             Vector3 rot = Vector3.zero;
             if (x)
             {
-                rot.x = -Mathf.Repeat(Time.unscaledTime * 100f, 360f) * speedMultiplier;
-                //transform.rotation = Quaternion.Euler ( -Mathf.Repeat (Time.unscaledTime * 100f, 360f),0f,0f);
+                xRot += -Time.unscaledDeltaTime * speed * speedMultiplier;
+                rot.x = Mathf.Repeat(xRot, 360f);
             }
             if (y)
             {
-                rot.y = -Mathf.Repeat(Time.unscaledTime * 100f, 360f) * speedMultiplier;
-                //transform.rotation = Quaternion.Euler (0f,  -Mathf.Repeat (Time.unscaledTime * 100f, 360f),0f);
+                yRot += -Time.unscaledDeltaTime * speed * speedMultiplier;
+                rot.y = Mathf.Repeat(yRot, 360f);
             }
             if (z)
             {
-                rot.z = -Mathf.Repeat(Time.unscaledTime * 100f, 360f) * speedMultiplier;
-                //transform.rotation = Quaternion.Euler (0f, 0f, -Mathf.Repeat (Time.unscaledTime * 100f, 360f));
+                zRot += -Time.unscaledDeltaTime * speed * speedMultiplier;
+                rot.z = Mathf.Repeat(zRot, 360f);
             }
+
+            // Apply the rotation to the object
             transform.rotation = Quaternion.Euler(rot);
         }
     }
