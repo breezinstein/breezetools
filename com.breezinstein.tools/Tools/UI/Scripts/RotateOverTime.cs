@@ -17,6 +17,14 @@ namespace Breezinstein.Tools.UI
         private float zRot; // Current rotation around z-axis
         private float speed = 100f; // Base speed of rotation
 
+        private void OnEnable()
+        {
+            // Reset rotation amounts
+            xRot = 0f;
+            yRot = 0f;
+            zRot = 0f;
+        }
+
         // Update is called once per frame
         void Update()
         {
