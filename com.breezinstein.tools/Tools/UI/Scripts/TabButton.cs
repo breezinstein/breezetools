@@ -7,6 +7,8 @@ using UnityEngine.Events;
 
 namespace Breezinstein.Tools.UI
 {
+    [RequireComponent(typeof(Image))]
+    [AddComponentMenu("Breeze's Tools/UI/Tab Button")]
     public class TabButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         public TabGroup tabGroup;
@@ -31,7 +33,6 @@ namespace Breezinstein.Tools.UI
             tabGroup.OnTabExit(this);
         }
 
-        // Start is called before the first frame update
         void Start()
         {
             background = GetComponent<Image>();

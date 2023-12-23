@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace Breezinstein.Tools.UI
 {
+    [AddComponentMenu("Breeze's Tools/UI/Tab Button")]
     public class TabGroup : MonoBehaviour
     {
         public List<TabButton> tabButtons;
@@ -17,21 +18,13 @@ namespace Breezinstein.Tools.UI
 
         public void Start()
         {
-            // Select first tab
-            foreach (TabButton tabButton in tabButtons)
+            if (selectedTab != null)
             {
-                if (tabButton.transform.GetSiblingIndex() == 0)
-                { OnTabSelected(tabButton); }
+                OnTabSelected(selectedTab);
             }
         }
         public void Subscribe(TabButton button)
         {
-            //if (tabButtons == null)
-            //{
-            //    tabButtons = new List<TabButton>();
-            //}
-            //tabButtons.Add(button);
-
             tabButtons.Add(button);
             // Sort by order in hierarchy
             tabButtons.Sort((x, y) => x.transform.GetSiblingIndex().CompareTo(y.transform.GetSiblingIndex()));
