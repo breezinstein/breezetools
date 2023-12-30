@@ -15,6 +15,7 @@ namespace Breezinstein.Tools
                 Debug.Log("Vibration Error: No vibration on device");
                 return false;
             }
+
             if (Vibration.IsInitialized() == false)
             {
                 Vibration.Init();
@@ -40,12 +41,17 @@ namespace Breezinstein.Tools
         {
 #if UNITY_EDITOR
             Vibration = new DummyVibrator();
+            Debug.Log("Using Dummy Vibration");
 #elif UNITY_IOS          
             Vibration = new iOSVibrator();
+            Debug.Log("Using iOS Vibration");
 #elif UNITY_ANDROID
             Vibration = new AndroidVibrator();
+            Debug.Log("Using Android Vibration");
+
 #else
             Vibration = new DummyVibrator();
+            Debug.Log("Using Dummy Vibration");
 #endif
             Vibration.Init();
         }

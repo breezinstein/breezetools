@@ -36,7 +36,7 @@ namespace Breezinstein.Tools
                 vibrationEffect = new AndroidJavaClass("android.os.VibrationEffect");
             }
 
-
+            initialized = true;
         }
 
         public bool HasVibrator()
