@@ -23,26 +23,21 @@ namespace Breezinstein.Tools.UI
 
         public MessageTemplate messageInfo;
 
-        public MessageBoxEvent eventCallback;
-
         void Start()
         {
             button1.onClick.AddListener(() =>
             {
-                eventCallback.Invoke(1);
-                //AudioManager.Instance.PlaySFX("ui_select");
+                messageInfo.Action1?.Invoke();
                 Close();
             });
             button2.onClick.AddListener(() =>
             {
-                eventCallback.Invoke(2);
-                //AudioManager.Instance.PlaySFX("ui_select");
+                messageInfo.Action2?.Invoke();
                 Close();
             });
            button3.onClick.AddListener(() =>
             {
-                eventCallback.Invoke(3);
-                //AudioManager.Instance.PlaySFX("ui_select");
+                messageInfo.Action3?.Invoke();
                 Close();
             });
         }
@@ -59,7 +54,7 @@ namespace Breezinstein.Tools.UI
 
         void SetUpButtons()
         {
-            switch (messageInfo.numberOfButtons)
+            switch (messageInfo.NumberOfButtons)
             {
                 case 1:
                
@@ -83,20 +78,16 @@ namespace Breezinstein.Tools.UI
 
         void SetupText()
         {
-            headerText.text = messageInfo.header;
-            messageText.text = messageInfo.message;
-            buttonText1.text = messageInfo.button1Text;
-            buttonText2.text = messageInfo.button2Text;
-            buttonText3.text = messageInfo.button3Text;
+            headerText.text = messageInfo.Header;
+            messageText.text = messageInfo.Message;
+            buttonText1.text = messageInfo.Button1Text;
+            buttonText2.text = messageInfo.Button2Text;
+            buttonText3.text = messageInfo.Button3Text;
 
         }
         public void Close()
         {
-            eventCallback.RemoveAllListeners();
             WindowManager.Instance.CloseMessageBox();
         }
     }
-
-    [Serializable]
-    public class MessageBoxEvent : UnityEvent<int> { } 
 }
