@@ -87,5 +87,10 @@ namespace Breezinstein.Tools.UI
             int previousIndex = currentIndex > 0 ? currentIndex - 1 : 0;
             OnTabSelected(tabButtons[previousIndex]);
         }
+
+        public TabButton GetTabByName(string name)
+        {
+            return tabButtons.Find(tab => tab.name == name);
+        }
     }
 }
