@@ -10,47 +10,47 @@ namespace Breezinstein.Tools.UI
         /// <summary>
         /// Gets the header of the message.
         /// </summary>
-        public string Header { get; }
+        public string Header { get; set; }
 
         /// <summary>
         /// Gets the main content of the message.
         /// </summary>
-        public string Message { get; }
+        public string Message { get; set; }
 
         /// <summary>
         /// Gets the text for the first button.
         /// </summary>
-        public string Button1Text { get; }
+        public string Button1Text { get; set; }
 
         /// <summary>
         /// Gets the text for the second button.
         /// </summary>
-        public string Button2Text { get; }
+        public string Button2Text { get; set; }
 
         /// <summary>
         /// Gets the text for the third button.
         /// </summary>
-        public string Button3Text { get; }
+        public string Button3Text { get; set; }
 
         /// <summary>
         /// Gets the number of buttons in the message.
         /// </summary>
-        public int NumberOfButtons { get; }
+        public int NumberOfButtons { get; set; }
 
         /// <summary>
         /// Gets the action to be performed when the first button is clicked.
         /// </summary>
-        public Action Action1 { get; }
+        public Action Action1 { get; set; }
 
         /// <summary>
         /// Gets the action to be performed when the second button is clicked.
         /// </summary>
-        public Action Action2 { get; }
+        public Action Action2 { get; set; }
 
         /// <summary>
         /// Gets the action to be performed when the third button is clicked.
         /// </summary>
-        public Action Action3 { get; }
+        public Action Action3 { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageTemplate"/> class.
@@ -64,6 +64,11 @@ namespace Breezinstein.Tools.UI
         /// <param name="button3Text">The text for the third button.</param>
         /// <param name="action3">The action to be performed when the third button is clicked.</param>
         public MessageTemplate(string header, string message, string button1Text = "Yes", Action action1 = null, string button2Text = null, Action action2 = null, string button3Text = null, Action action3 = null)
+        {
+            Set(header, message, button1Text, action1, button2Text, action2, button3Text, action3);
+        }
+
+        public void Set(string header, string message, string button1Text = "Yes", Action action1 = null, string button2Text = null, Action action2 = null, string button3Text = null, Action action3 = null)
         {
             Header = header;
             Message = message;
