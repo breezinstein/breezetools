@@ -91,6 +91,7 @@ namespace Breezinstein.Tools.UI
         public TabButton GetTabByName(string name)
         {
             return tabButtons.Find(tab => tab.name == name);
-        }
+        }
+
     }
 }
