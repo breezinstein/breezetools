@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 namespace Breezinstein.Tools.Audio
 {
+    /// <summary>
+    /// Represents an audio slider for controlling volume.
+    /// </summary>
     [AddComponentMenu("Breeze's Tools/Audio/Audio UI Slider")]
     [RequireComponent(typeof(Slider))]
     public class AudioSlider : MonoBehaviour
@@ -24,12 +27,20 @@ namespace Breezinstein.Tools.Audio
             UpdateUI();
         }
 
+        /// <summary>
+        /// Sets the volume of the audio source.
+        /// </summary>
+        /// <param name="volume">The volume value.</param>
         public void SetVolume(float volume)
         {
             AudioManager.Instance.SetVolume(sourceType, volume);
             UpdateUI();
         }
-        void UpdateUI()
+
+        /// <summary>
+        /// Updates the UI based on the source type.
+        /// </summary>
+        private void UpdateUI()
         {
             switch (sourceType)
             {

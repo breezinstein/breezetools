@@ -8,6 +8,9 @@ using UnityEngine;
 namespace Breezinstein.Tools
 {
 #if UNITY_ANDROID
+    /// <summary>
+    /// AndroidVibrator is a class that provides functionality for vibrating Android devices.
+    /// </summary>
     public class AndroidVibrator : IVibrator
     {
         public static AndroidJavaClass unityPlayer;
@@ -18,10 +21,17 @@ namespace Breezinstein.Tools
 
         private bool initialized = false;
 
+        /// <summary>
+        /// Checks if the AndroidVibrator is initialized.
+        /// </summary>
         public bool IsInitialized()
         {
             return initialized;
         }
+
+        /// <summary>
+        /// Initializes the AndroidVibrator.
+        /// </summary>
         public void Init()
         {
             if (initialized) return;
@@ -39,6 +49,9 @@ namespace Breezinstein.Tools
             initialized = true;
         }
 
+        /// <summary>
+        /// Checks if the device has a vibrator.
+        /// </summary>
         public bool HasVibrator()
         {
             AndroidJavaClass contextClass = new AndroidJavaClass("android.content.Context");
@@ -53,11 +66,18 @@ namespace Breezinstein.Tools
                 return false;
             }
         }
+
+        /// <summary>
+        /// Vibrates the device for a short period of time.
+        /// </summary>
         public static void Vibrate()
         {
             Handheld.Vibrate();
         }
 
+        /// <summary>
+        /// Vibrates the device for a specified number of milliseconds.
+        /// </summary>
         public void Vibrate(long milliseconds)
         {
             if (AndroidVersion >= 26)
@@ -72,6 +92,9 @@ namespace Breezinstein.Tools
             }
         }
 
+        /// <summary>
+        /// Vibrates the device with a specified pattern and repeat index.
+        /// </summary>
         public void Vibrate(long[] pattern, int repeat)
         {
             if (AndroidVersion >= 26)
@@ -85,27 +108,42 @@ namespace Breezinstein.Tools
             }
         }
 
+        /// <summary>
+        /// Vibrates the device with a "nope" pattern.
+        /// </summary>
         public void VibrateNope()
         {
             long[] pattern = { 0, 50, 50, 50 };
             Vibrate(pattern, -1);
         }
 
+        /// <summary>
+        /// Vibrates the device with a "peek" pattern.
+        /// </summary>
         public void VibratePeek()
         {
             Vibrate(100);
         }
 
+        /// <summary>
+        /// Vibrates the device with a "pop" pattern.
+        /// </summary>
         public void VibratePop()
         {
             Vibrate(50);
         }
 
+        /// <summary>
+        /// Cancels any ongoing vibrations.
+        /// </summary>
         public void Cancel()
         {
             vibrator.Call("cancel");
         }
 
+        /// <summary>
+        /// Gets the Android version of the device.
+        /// </summary>
         public static int AndroidVersion
         {
             get

@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 namespace Breezinstein.Tools
 {
+    /// <summary>
+    /// FPSCounter is a MonoBehaviour that measures and displays the current, minimum, and maximum FPS.
+    /// </summary>
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class FPSCounter : MonoBehaviour
     {
@@ -23,13 +26,20 @@ namespace Breezinstein.Tools
         private float[] previousFPS = new float[16];
         private int previousFPSIndex = 0;
 
+        /// <summary>
+        /// Start is called before the first frame update.
+        /// It initializes the FPS measurement period and gets the TextMeshProUGUI component.
+        /// </summary>
         private void Start()
         {
             m_FpsNextPeriod = Time.realtimeSinceStartup + fpsMeasurePeriod;
             m_Text = GetComponent<TextMeshProUGUI>();
         }
 
-
+        /// <summary>
+        /// Update is called once per frame.
+        /// It measures the average frames per second and updates the FPS display.
+        /// </summary>
         private void Update()
         {
             // measure average frames per second
@@ -44,7 +54,7 @@ namespace Breezinstein.Tools
                 previousFPS[previousFPSIndex] = m_CurrentFps;
                 previousFPSIndex++;
                 // loop index if above 16
-                if(previousFPSIndex >= 16)
+                if (previousFPSIndex >= 16)
                 {
                     previousFPSIndex = 0;
                 }
@@ -52,7 +62,7 @@ namespace Breezinstein.Tools
                 // calculate min and max fps
                 m_MinFps = previousFPS[0];
                 m_MaxFps = previousFPS[0];
-                for(int i = 1; i < 16; i++)
+                for (int i = 1; i < 16; i++)
                 {
                     if (previousFPS[i] < m_MinFps)
                     {

@@ -4,10 +4,17 @@ using UnityEngine.Audio;
 
 namespace Breezinstein.Tools.Audio
 {
+    /// <summary>
+    /// Manages all audio related functionality.
+    /// </summary>
     [AddComponentMenu("Breeze's Tools/Audio/Audio Manager")]
     public class AudioManager : MonoBehaviour
     {
         private static AudioSettings m_Settings;
+
+        /// <summary>
+        /// Gets or sets the audio settings.
+        /// </summary>
         public static AudioSettings Settings
         {
             get
@@ -57,7 +64,10 @@ namespace Breezinstein.Tools.Audio
             UpdateVolumes();
 
         }
-        
+
+        /// <summary>
+        /// Updates the volume of the audio sources.
+        /// </summary>
         public void UpdateVolumes()
         {
             m_AudioMixer.SetFloat("MainVolume", Mathf.Log10(Settings.MainVolume) * 20);
@@ -65,6 +75,9 @@ namespace Breezinstein.Tools.Audio
             m_EffectsGroup.audioMixer.SetFloat("SFXVolume", Mathf.Log10(Settings.EffectsVolume) * 20);
         }
 
+        /// <summary>
+        /// Sets the volume of the specified audio source.
+        /// </summary>
         public void SetVolume(AudioSourceType sourceType, float volume)
         {
             volume = Mathf.Clamp(volume, AudioSettings.MIN_VOLUME, 1f);
@@ -86,7 +99,9 @@ namespace Breezinstein.Tools.Audio
             UpdateVolumes();
         }
 
-
+        /// <summary>
+        /// Toggles the specified audio source.
+        /// </summary>
         public void ToggleSource(AudioSourceType sourceType)
         {
             switch (sourceType)
@@ -107,6 +122,9 @@ namespace Breezinstein.Tools.Audio
             UpdateVolumes();
         }
 
+        /// <summary>
+        /// Creates an audio source of the specified type.
+        /// </summary>
         private AudioSource CreateAudioSource(AudioSourceType sourceType)
         {
             AudioSource source = new GameObject().AddComponent<AudioSource>();
@@ -130,6 +148,9 @@ namespace Breezinstein.Tools.Audio
             return source;
         }
 
+        /// <summary>
+        /// Plays a sound effect with the specified clip name.
+        /// </summary>
         public static void PlaySoundEffect(string clipName)
         {
             Instance.UpdateVolumes();
@@ -137,6 +158,9 @@ namespace Breezinstein.Tools.Audio
             Instance.m_EffectsSource.PlayOneShot(item.clip, item.volume);
         }
 
+        /// <summary>
+        /// Plays music with the specified clip name.
+        /// </summary>
         public static void PlayMusic(string clipName)
         {
             Instance.UpdateVolumes();
@@ -146,6 +170,9 @@ namespace Breezinstein.Tools.Audio
             Instance.m_MusicSource.Play();
         }
 
+        /// <summary>
+        /// Plays random music.
+        /// </summary>
         public static void PlayRandomMusic()
         {
             Instance.UpdateVolumes();
@@ -154,12 +181,17 @@ namespace Breezinstein.Tools.Audio
             Instance.m_MusicSource.Play();
         }
 
+        /// <summary>
+        /// Stops the music.
+        /// </summary>
         public static void StopMusic()
         {
             Instance.m_MusicSource.Stop();
         }
 
-
+        /// <summary>
+        /// Gets a random audio clip of the specified category.
+        /// </summary>
         private static AudioClip GetRandomAudioClip(AudioCategory category)
         {
             //Get all clips of that category
@@ -175,6 +207,9 @@ namespace Breezinstein.Tools.Audio
             return clips[UnityEngine.Random.Range(0, clips.Count)].clip;
         }
 
+        /// <summary>
+        /// Gets an audio clip with the specified name.
+        /// </summary>
         private static AudioItem GetAudioClip(string clipName)
         {
             AudioItem audioItem;
@@ -189,13 +224,14 @@ namespace Breezinstein.Tools.Audio
             }
         }
 
+        /// <summary>
+        /// Enum for audio source types.
+        /// </summary>
         public enum AudioSourceType
         {
             MUSIC = 0,
             EFFECT,
             MAIN
         }
-
-
     }
 }

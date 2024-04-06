@@ -5,10 +5,16 @@ using UnityEngine;
 
 namespace Breezinstein.Tools
 {
+    /// <summary>
+    /// Static class for generating random names.
+    /// </summary>
     public static class NameGen
     {
         private static List<string> nameList;
 
+        /// <summary>
+        /// Loads text assets from the "namelists" resource folder and populates the nameList.
+        /// </summary>
         private static void LoadTextAssets()
         {
             nameList = new List<string>();
@@ -19,6 +25,9 @@ namespace Breezinstein.Tools
             }
         }
 
+        /// <summary>
+        /// Generates a random single name.
+        /// </summary>
         public static string GenerateRandomSingleName
         {
             get
@@ -31,6 +40,9 @@ namespace Breezinstein.Tools
             }
         }
 
+        /// <summary>
+        /// Generates a random double name.
+        /// </summary>
         public static string GenerateRandomDoubleName
         {
             get
@@ -40,6 +52,9 @@ namespace Breezinstein.Tools
             }
         }
 
+        /// <summary>
+        /// Generates a random username.
+        /// </summary>
         public static string GenerateRandomUsername
         {
             get
@@ -51,6 +66,9 @@ namespace Breezinstein.Tools
             }
         }
 
+        /// <summary>
+        /// Generates a random double username.
+        /// </summary>
         public static string GenerateRandomDoubleUsername
         {
             get
@@ -61,6 +79,11 @@ namespace Breezinstein.Tools
             }
         }
 
+        /// <summary>
+        /// Converts a string from Latin to ASCII.
+        /// </summary>
+        /// <param name="inString">The string to convert.</param>
+        /// <returns>The converted string.</returns>
         private static string LatinToAscii(string inString)
         {
             StringBuilder newStringBuilder = new StringBuilder();

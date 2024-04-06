@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 namespace Breezinstein.Tools.Audio
 {
+    /// <summary>
+    /// Represents a UI toggle for controlling audio sources.
+    /// </summary>
     [AddComponentMenu("Breeze's Tools/Audio/Audio UI Toggle")]
     public class AudioUIToggle : MonoBehaviour
     {
@@ -17,18 +20,26 @@ namespace Breezinstein.Tools.Audio
         [SerializeField]
         private Sprite offSprite;
 
-        // Use this for initialization
+        /// <summary>
+        /// Initializes the UI toggle and updates its state.
+        /// </summary>
         void Start()
         {
             UpdateUI();
         }
 
+        /// <summary>
+        /// Toggles the audio source and updates the UI.
+        /// </summary>
         public void ToggleAudio()
         {
             AudioManager.Instance.ToggleSource(sourceType);
             UpdateUI();
         }
 
+        /// <summary>
+        /// Updates the UI based on the current audio source state.
+        /// </summary>
         void UpdateUI()
         {
             switch (sourceType)
