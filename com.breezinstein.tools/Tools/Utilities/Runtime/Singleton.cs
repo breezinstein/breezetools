@@ -14,7 +14,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             {
                 if (_instance == null && !_quitting)
                 {
-                    T tempInstance = GameObject.FindObjectOfType<T>();
+                    T tempInstance = GameObject.FindFirstObjectByType<T>();
                     if (tempInstance == null)
                     {
                         GameObject go = new GameObject(nameof(T));
