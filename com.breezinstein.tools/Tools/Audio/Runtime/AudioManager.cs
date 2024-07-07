@@ -161,10 +161,11 @@ namespace Breezinstein.Tools.Audio
         /// <summary>
         /// Plays music with the specified clip name.
         /// </summary>
-        public static void PlayMusic(string clipName)
+        public static void PlayMusic(string clipName, bool restart = true)
         {
             Instance.UpdateVolumes();
             AudioItem item = GetAudioClip(clipName);
+            if(Instance.m_MusicSource.clip == item.clip && !restart) return;
             Instance.m_MusicSource.clip = item.clip;
             Instance.m_MusicSource.volume = item.volume;
             Instance.m_MusicSource.Play();
