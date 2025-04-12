@@ -4,7 +4,6 @@ using System.Collections;
 
 namespace Breezinstein.Tools.UI
 {
-    [RequireComponent(typeof(Animator))]
     public class Window : MonoBehaviour
     {
         public int ID = -99;
@@ -56,6 +55,11 @@ namespace Breezinstein.Tools.UI
 
         public void PlayAnimation(string clipName)
         {
+            if(animator == null)
+            {
+                Debug.LogWarning("Animator Not Found");
+                return;
+            }
             animator.Play(clipName);
         }
 
