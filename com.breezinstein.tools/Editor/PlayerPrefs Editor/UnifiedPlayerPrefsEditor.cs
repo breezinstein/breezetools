@@ -111,6 +111,11 @@ namespace Breezinstein.Tools
             filterTypeDropdown = new DropdownField("Filter") { name = "filter-dropdown" };
             autoRefreshToggle = new Toggle("Auto Refresh") { name = "auto-refresh-toggle" };
             
+            // Initialize filter dropdown choices
+            var filterNames = Enum.GetNames(typeof(ExtendedPrefType)).ToList();
+            filterTypeDropdown.choices = filterNames;
+            filterTypeDropdown.value = ExtendedPrefType.All.ToString();
+            
             searchContainer.Add(searchField);
             searchContainer.Add(filterTypeDropdown);
             searchContainer.Add(autoRefreshToggle);
@@ -122,6 +127,10 @@ namespace Breezinstein.Tools
             typeDropdown = new DropdownField("Type") { name = "type-dropdown" };
             valueField = new TextField("Value") { name = "value-field" };
             addButton = new Button(() => AddPlayerPref()) { text = "Add", name = "add-button" };
+            
+            // Ensure dropdown is properly initialized
+            typeDropdown.choices = new List<string> { "String", "Int", "Float", "Bool", "Long", "Vector2", "Vector3", "Quaternion", "Color" };
+            typeDropdown.value = "String";
             
             addContainer.Add(keyField);
             addContainer.Add(typeDropdown);
@@ -176,85 +185,11 @@ namespace Breezinstein.Tools
                 return;
             }
             
-            // Check if type dropdown is actually functional
-            if (!IsDropdownFunctional(typeDropdown))
-            {
-                RecreateTypeDropdown();
-            }
-            
             // Setup dropdowns
             SetupTypeDropdown();
             SetupFilterDropdown();
             SetupListView();
             SetupEventCallbacks();
-        }
-
-        private bool IsDropdownFunctional(DropdownField dropdown)
-        {
-            if (dropdown == null) return false;
-            
-            // Check if it has the expected structure for a DropdownField
-            var input = dropdown.Q(className: "unity-dropdown-field__input");
-            var arrow = dropdown.Q(className: "unity-dropdown-field__arrow");
-            
-            return input != null && arrow != null;
-        }
-
-        private void RecreateTypeDropdown()
-        {
-            try
-            {
-                // Find the parent container
-                var addLeft = root.Q("add-left");
-                if (addLeft == null)
-                {
-                    Debug.LogError("[UnifiedPlayerPrefsEditor] Could not find add-left container!");
-                    return;
-                }
-                
-                // Remove the existing dropdown
-                if (typeDropdown != null)
-                {
-                    typeDropdown.RemoveFromHierarchy();
-                }
-                
-                // Create a new dropdown with explicit configuration
-                typeDropdown = new DropdownField("Type");
-                typeDropdown.name = "type-dropdown";
-                typeDropdown.AddToClassList("type-dropdown");
-                
-                // Force proper display properties
-                typeDropdown.style.display = DisplayStyle.Flex;
-                typeDropdown.style.visibility = Visibility.Visible;
-                typeDropdown.style.opacity = 1;
-                typeDropdown.SetEnabled(true);
-                typeDropdown.focusable = true;
-                
-                // Set explicit size to match original design
-                typeDropdown.style.minWidth = 120;
-                typeDropdown.style.maxWidth = 120;
-                typeDropdown.style.height = 20;
-                
-                // Insert it in the correct position (after key-field)
-                var keyField = addLeft.Q<TextField>("key-field");
-                if (keyField != null)
-                {
-                    var keyIndex = addLeft.IndexOf(keyField);
-                    addLeft.Insert(keyIndex + 1, typeDropdown);
-                }
-                else
-                {
-                    addLeft.Add(typeDropdown);
-                }
-                
-                // Force immediate layout update
-                typeDropdown.MarkDirtyRepaint();
-                addLeft.MarkDirtyRepaint();
-            }
-            catch (System.Exception ex)
-            {
-                Debug.LogError($"[UnifiedPlayerPrefsEditor] Error recreating type dropdown: {ex.Message}\n{ex.StackTrace}");
-            }
         }
 
         private void SetupTypeDropdown()
@@ -265,65 +200,71 @@ namespace Breezinstein.Tools
                 return;
             }
             
-            try
+            // Define the available types for adding new PlayerPrefs
+            // Include all basic types that users would commonly want to add
+            var availableTypes = new[]
             {
-                // Force enable and make visible
-                typeDropdown.SetEnabled(true);
-                typeDropdown.visible = true;
-                typeDropdown.style.display = DisplayStyle.Flex;
-                
-                // Get all enum names and filter to only basic types
-                var allTypeNames = Enum.GetNames(typeof(ExtendedPrefType));
-                var basicTypes = new[] { "String", "Int", "Float", "Bool", "Long", "Vector2", "Vector3", "Quaternion", "Color" };
-                var typeNames = allTypeNames.Where(name => basicTypes.Contains(name)).ToList();
-                
-                if (typeNames.Count == 0)
+                "String", "Int", "Float", "Bool", "Long",
+                "Vector2", "Vector3", "Quaternion", "Color"
+            };
+            
+            // Clear any existing choices and set new ones
+            typeDropdown.choices = availableTypes.ToList();
+            
+            // Set default selection to String
+            typeDropdown.index = 0;
+            typeDropdown.value = availableTypes[0];
+            selectedType = ExtendedPrefType.String;
+            
+            // Register value change callback
+            typeDropdown.RegisterValueChangedCallback(evt =>
+            {
+                if (Enum.TryParse<ExtendedPrefType>(evt.newValue, out var parsedType))
                 {
-                    Debug.LogError("[UnifiedPlayerPrefsEditor] No valid types found for dropdown!");
-                    return;
+                    selectedType = parsedType;
+                    UpdateValueFieldPlaceholder();
                 }
-                
-                // Clear any existing choices first
-                typeDropdown.choices.Clear();
-                
-                // Set choices
-                typeDropdown.choices = typeNames;
-                
-                // Set default value and index
-                typeDropdown.index = 0;
-                typeDropdown.value = typeNames[0];
-                
-                // Force a layout update
-                typeDropdown.MarkDirtyRepaint();
-                
-                // Register callback
-                typeDropdown.RegisterValueChangedCallback(evt =>
+                else
                 {
-                    if (Enum.TryParse(evt.newValue, out selectedType))
-                    {
-                        UpdateValueFieldPlaceholder();
-                    }
-                    else
-                    {
-                        Debug.LogError($"[UnifiedPlayerPrefsEditor] Failed to parse '{evt.newValue}' to ExtendedPrefType enum");
-                    }
-                });
-            }
-            catch (System.Exception ex)
-            {
-                Debug.LogError($"[UnifiedPlayerPrefsEditor] Error setting up type dropdown: {ex.Message}\n{ex.StackTrace}");
-            }
+                    Debug.LogWarning($"[UnifiedPlayerPrefsEditor] Failed to parse type: {evt.newValue}");
+                    // Fallback to String if parsing fails
+                    selectedType = ExtendedPrefType.String;
+                }
+            });
+            
+            // Set initial placeholder
+            UpdateValueFieldPlaceholder();
         }
 
         private void SetupFilterDropdown()
         {
+            if (filterTypeDropdown == null)
+            {
+                Debug.LogError("[UnifiedPlayerPrefsEditor] filterTypeDropdown is null! Cannot setup filter dropdown.");
+                return;
+            }
+            
+            // Get all enum values for filtering (including All and arrays)
             var filterNames = Enum.GetNames(typeof(ExtendedPrefType)).ToList();
+            
+            // Clear and set choices
             filterTypeDropdown.choices = filterNames;
             filterTypeDropdown.value = ExtendedPrefType.All.ToString();
-            filterTypeDropdown.RegisterValueChangedCallback(evt => 
+            filterType = ExtendedPrefType.All;
+            
+            // Register callback
+            filterTypeDropdown.RegisterValueChangedCallback(evt =>
             {
-                Enum.TryParse(evt.newValue, out filterType);
-                FilterPlayerPrefs();
+                if (Enum.TryParse<ExtendedPrefType>(evt.newValue, out var parsedType))
+                {
+                    filterType = parsedType;
+                    FilterPlayerPrefs();
+                }
+                else
+                {
+                    Debug.LogWarning($"[UnifiedPlayerPrefsEditor] Failed to parse filter type: {evt.newValue}");
+                    filterType = ExtendedPrefType.All;
+                }
             });
         }
 
@@ -400,8 +341,15 @@ namespace Breezinstein.Tools
 
         private void UpdateValueFieldPlaceholder()
         {
+            if (valueField == null) return;
+            
+            // Set placeholder text based on selected type
             switch (selectedType)
             {
+                case ExtendedPrefType.String:
+                    valueField.value = "";
+                    valueField.SetValueWithoutNotify("");
+                    break;
                 case ExtendedPrefType.Int:
                     valueField.value = "0";
                     break;
