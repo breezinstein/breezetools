@@ -148,6 +148,69 @@
 .type-dropdown {
     min-width: 120px;
     max-width: 120px;
+    /* CRITICAL FIX: Ensure dropdown is displayed as flex */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /* Reset any problematic inherited styles */
+    background-color: transparent;
+    border-width: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/* Force proper DropdownField internal structure */
+.type-dropdown .unity-dropdown-field {
+    flex-grow: 1;
+    min-height: 20px;
+    display: flex;
+}
+
+.type-dropdown .unity-dropdown-field__input {
+    background-color: var(--unity-colors-input-background);
+    border-color: var(--unity-colors-input-border);
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 4px 8px;
+    min-height: 18px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    cursor: default;
+}
+
+.type-dropdown .unity-dropdown-field__input:hover {
+    border-color: var(--unity-colors-input-border-hover);
+    background-color: var(--unity-colors-input-background-hover);
+}
+
+.type-dropdown .unity-dropdown-field__input:focus {
+    border-color: var(--unity-colors-input-border-focus);
+    border-width: 2px;
+}
+
+/* Ensure dropdown arrow is visible and functional */
+.type-dropdown .unity-dropdown-field__arrow {
+    background-image: resource('d_dropdown@2x');
+    width: 12px;
+    height: 12px;
+    margin-left: 4px;
+    margin-right: 4px;
+    flex-shrink: 0;
+    -unity-background-image-tint-color: var(--unity-colors-label-text);
+    cursor: default;
+}
+
+/* Override any label-like styling that might be applied */
+.type-dropdown .unity-label {
+    display: none !important;
+}
+
+/* Ensure text is visible in dropdown */
+.type-dropdown .unity-dropdown-field__text {
+    color: var(--unity-colors-label-text);
+    flex-grow: 1;
+    -unity-text-align: middle-left;
 }
 
 .add-button {

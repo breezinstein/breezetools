@@ -171,9 +171,15 @@ namespace Breezinstein.Tools
             // Ensure all required elements exist
             if (searchField == null || typeDropdown == null || playerPrefsListView == null)
             {
-                Debug.LogWarning("Some UI elements not found, falling back to code creation");
+                Debug.LogWarning("[UnifiedPlayerPrefsEditor] Some UI elements not found, falling back to code creation");
                 CreateUIFallback();
                 return;
+            }
+            
+            // Check if type dropdown is actually functional
+            if (!IsDropdownFunctional(typeDropdown))
+            {
+                RecreateTypeDropdown();
             }
             
             // Setup dropdowns
@@ -183,16 +189,130 @@ namespace Breezinstein.Tools
             SetupEventCallbacks();
         }
 
+        private bool IsDropdownFunctional(DropdownField dropdown)
+        {
+            if (dropdown == null) return false;
+            
+            // Check if it has the expected structure for a DropdownField
+            var input = dropdown.Q(className: "unity-dropdown-field__input");
+            var arrow = dropdown.Q(className: "unity-dropdown-field__arrow");
+            
+            return input != null && arrow != null;
+        }
+
+        private void RecreateTypeDropdown()
+        {
+            try
+            {
+                // Find the parent container
+                var addLeft = root.Q("add-left");
+                if (addLeft == null)
+                {
+                    Debug.LogError("[UnifiedPlayerPrefsEditor] Could not find add-left container!");
+                    return;
+                }
+                
+                // Remove the existing dropdown
+                if (typeDropdown != null)
+                {
+                    typeDropdown.RemoveFromHierarchy();
+                }
+                
+                // Create a new dropdown with explicit configuration
+                typeDropdown = new DropdownField("Type");
+                typeDropdown.name = "type-dropdown";
+                typeDropdown.AddToClassList("type-dropdown");
+                
+                // Force proper display properties
+                typeDropdown.style.display = DisplayStyle.Flex;
+                typeDropdown.style.visibility = Visibility.Visible;
+                typeDropdown.style.opacity = 1;
+                typeDropdown.SetEnabled(true);
+                typeDropdown.focusable = true;
+                
+                // Set explicit size to match original design
+                typeDropdown.style.minWidth = 120;
+                typeDropdown.style.maxWidth = 120;
+                typeDropdown.style.height = 20;
+                
+                // Insert it in the correct position (after key-field)
+                var keyField = addLeft.Q<TextField>("key-field");
+                if (keyField != null)
+                {
+                    var keyIndex = addLeft.IndexOf(keyField);
+                    addLeft.Insert(keyIndex + 1, typeDropdown);
+                }
+                else
+                {
+                    addLeft.Add(typeDropdown);
+                }
+                
+                // Force immediate layout update
+                typeDropdown.MarkDirtyRepaint();
+                addLeft.MarkDirtyRepaint();
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[UnifiedPlayerPrefsEditor] Error recreating type dropdown: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
         private void SetupTypeDropdown()
         {
-            var typeNames = Enum.GetNames(typeof(ExtendedPrefType)).Where(name => name != "All").ToList();
-            typeDropdown.choices = typeNames;
-            typeDropdown.value = ExtendedPrefType.String.ToString();
-            typeDropdown.RegisterValueChangedCallback(evt => 
+            if (typeDropdown == null)
             {
-                Enum.TryParse(evt.newValue, out selectedType);
-                UpdateValueFieldPlaceholder();
-            });
+                Debug.LogError("[UnifiedPlayerPrefsEditor] typeDropdown is null! Cannot setup dropdown.");
+                return;
+            }
+            
+            try
+            {
+                // Force enable and make visible
+                typeDropdown.SetEnabled(true);
+                typeDropdown.visible = true;
+                typeDropdown.style.display = DisplayStyle.Flex;
+                
+                // Get all enum names and filter to only basic types
+                var allTypeNames = Enum.GetNames(typeof(ExtendedPrefType));
+                var basicTypes = new[] { "String", "Int", "Float", "Bool", "Long", "Vector2", "Vector3", "Quaternion", "Color" };
+                var typeNames = allTypeNames.Where(name => basicTypes.Contains(name)).ToList();
+                
+                if (typeNames.Count == 0)
+                {
+                    Debug.LogError("[UnifiedPlayerPrefsEditor] No valid types found for dropdown!");
+                    return;
+                }
+                
+                // Clear any existing choices first
+                typeDropdown.choices.Clear();
+                
+                // Set choices
+                typeDropdown.choices = typeNames;
+                
+                // Set default value and index
+                typeDropdown.index = 0;
+                typeDropdown.value = typeNames[0];
+                
+                // Force a layout update
+                typeDropdown.MarkDirtyRepaint();
+                
+                // Register callback
+                typeDropdown.RegisterValueChangedCallback(evt =>
+                {
+                    if (Enum.TryParse(evt.newValue, out selectedType))
+                    {
+                        UpdateValueFieldPlaceholder();
+                    }
+                    else
+                    {
+                        Debug.LogError($"[UnifiedPlayerPrefsEditor] Failed to parse '{evt.newValue}' to ExtendedPrefType enum");
+                    }
+                });
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[UnifiedPlayerPrefsEditor] Error setting up type dropdown: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         private void SetupFilterDropdown()
