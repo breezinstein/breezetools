@@ -53,7 +53,7 @@ namespace Breezinstein.Tools.UI
             }
         }
 
-        public void PlayAnimation(string clipName)
+        public virtual void PlayAnimation(string clipName)
         {
             if(animator == null)
             {
