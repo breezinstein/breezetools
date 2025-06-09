@@ -23,7 +23,6 @@ namespace Breezinstein.Tools
     public static class PlayerPrefsExtensions
     {
         private static int endianDiff1;
-        private static int endianDiff2;
         private static int idx;
         private static byte[] byteBlock;
 
@@ -703,12 +702,10 @@ namespace Breezinstein.Tools
             if (BitConverter.IsLittleEndian)
             {
                 endianDiff1 = 0;
-                endianDiff2 = 0;
             }
             else
             {
                 endianDiff1 = 3;
-                endianDiff2 = 1;
             }
             idx = 1;
         }

@@ -23,6 +23,9 @@ namespace Breezinstein.Tools
             // Test array types
             TestArrayTypes();
             
+            // Test JSON functionality
+            TestJsonFunctionality();
+            
             // Test discovery
             TestDiscovery();
             
@@ -44,6 +47,60 @@ namespace Breezinstein.Tools
             
             PlayerPrefs.Save();
             Debug.Log("Basic types test completed");
+        }
+
+        private static void TestJsonFunctionality()
+        {
+            Debug.Log("Testing JSON functionality...");
+            
+            // Test valid JSON objects
+            string validJsonObject = @"{
+    ""name"": ""Player1"",
+    ""level"": 10,
+    ""inventory"": [
+        {""item"": ""sword"", ""count"": 1},
+        {""item"": ""potion"", ""count"": 5}
+    ],
+    ""settings"": {
+        ""music"": true,
+        ""volume"": 0.8
+    }
+}";
+            PlayerPrefs.SetString("TestValidJSON", validJsonObject);
+            
+            // Test valid JSON array
+            string validJsonArray = @"[
+    {""id"": 1, ""name"": ""Item1""},
+    {""id"": 2, ""name"": ""Item2""},
+    {""id"": 3, ""name"": ""Item3""}
+]";
+            PlayerPrefs.SetString("TestValidJSONArray", validJsonArray);
+            
+            // Test minified JSON
+            string minifiedJson = @"{""compact"":true,""data"":[1,2,3,4,5]}";
+            PlayerPrefs.SetString("TestMinifiedJSON", minifiedJson);
+            
+            // Test invalid JSON (for validation testing)
+            string invalidJson = @"{""name"": ""Invalid"", ""missing"": }";
+            PlayerPrefs.SetString("TestInvalidJSON", invalidJson);
+            
+            // Test non-JSON string (should not be affected)
+            PlayerPrefs.SetString("TestPlainString", "This is just a regular string, not JSON");
+            
+            // Test empty string
+            PlayerPrefs.SetString("TestEmptyString", "");
+            
+            PlayerPrefs.Save();
+            
+            // Test JSON validation
+            Debug.Log($"Valid JSON Object validation: {PlayerPrefEntryData.IsValidJsonString(validJsonObject)}");
+            Debug.Log($"Valid JSON Array validation: {PlayerPrefEntryData.IsValidJsonString(validJsonArray)}");
+            Debug.Log($"Minified JSON validation: {PlayerPrefEntryData.IsValidJsonString(minifiedJson)}");
+            Debug.Log($"Invalid JSON validation: {PlayerPrefEntryData.IsValidJsonString(invalidJson)}");
+            Debug.Log($"Plain string validation: {PlayerPrefEntryData.IsValidJsonString("This is just a regular string, not JSON")}");
+            Debug.Log($"Empty string validation: {PlayerPrefEntryData.IsValidJsonString("")}");
+            
+            Debug.Log("JSON functionality test completed");
         }
 
         private static void TestExtendedTypes()

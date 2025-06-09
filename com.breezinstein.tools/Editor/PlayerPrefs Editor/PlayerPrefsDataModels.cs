@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace Breezinstein.Tools
 {
@@ -44,6 +45,9 @@ namespace Breezinstein.Tools
         public DateTime LastModified { get; set; }
         public string DisplayValue { get; private set; }
         public string TypeDisplayName { get; private set; }
+        public bool IsJsonMode { get; set; }
+        public bool IsValidJson { get; private set; }
+        public string JsonError { get; private set; }
 
         public PlayerPrefEntryData(string key, object value, ExtendedPrefType type)
         {
@@ -51,6 +55,7 @@ namespace Breezinstein.Tools
             Value = value;
             Type = type;
             IsEditing = false;
+            IsJsonMode = false;
             LastModified = DateTime.Now;
             UpdateDisplayValues();
         }
@@ -60,6 +65,12 @@ namespace Breezinstein.Tools
             EditValue = FormatValueForEditing(Value, Type);
             DisplayValue = FormatValueForDisplay(Value, Type);
             TypeDisplayName = GetTypeDisplayName(Type);
+            
+            // Validate JSON if in JSON mode and is a string type
+            if (IsJsonMode && Type == ExtendedPrefType.String)
+            {
+                ValidateJson();
+            }
         }
 
         private string FormatValueForEditing(object value, ExtendedPrefType type)
@@ -68,6 +79,12 @@ namespace Breezinstein.Tools
 
             switch (type)
             {
+                case ExtendedPrefType.String:
+                    if (IsJsonMode)
+                    {
+                        return FormatJsonForEditing(value.ToString());
+                    }
+                    return value.ToString();
                 case ExtendedPrefType.Vector2:
                     var v2 = (Vector2)value;
                     return $"{v2.x},{v2.y}";
@@ -111,6 +128,13 @@ namespace Breezinstein.Tools
 
             switch (type)
             {
+                case ExtendedPrefType.String:
+                    if (IsJsonMode)
+                    {
+                        return FormatJsonForDisplay(value.ToString());
+                    }
+                    var str = value.ToString();
+                    return str.Length > 50 ? str.Substring(0, 47) + "..." : str;
                 case ExtendedPrefType.Bool:
                     return (bool)value ? "True" : "False";
                 case ExtendedPrefType.Vector2:
@@ -137,7 +161,7 @@ namespace Breezinstein.Tools
                     return $"[{string.Join(", ", boolArray)}] ({boolArray.Length} items)";
                 case ExtendedPrefType.StringArray:
                     var stringArray = (string[])value;
-                    var preview = stringArray.Length > 3 ? 
+                    var preview = stringArray.Length > 3 ?
                         string.Join(", ", stringArray, 0, 3) + "..." :
                         string.Join(", ", stringArray);
                     return $"[{preview}] ({stringArray.Length} items)";
@@ -152,8 +176,8 @@ namespace Breezinstein.Tools
                 case ExtendedPrefType.Float:
                     return $"{(float)value:F3}f";
                 default:
-                    var str = value.ToString();
-                    return str.Length > 50 ? str.Substring(0, 47) + "..." : str;
+                    var defaultStr = value.ToString();
+                    return defaultStr.Length > 50 ? defaultStr.Substring(0, 47) + "..." : defaultStr;
             }
         }
 
@@ -179,6 +203,230 @@ namespace Breezinstein.Tools
                 case ExtendedPrefType.QuaternionArray: return "Quaternion[]";
                 case ExtendedPrefType.ColorArray: return "Color[]";
                 default: return type.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Validates if the current string value is valid JSON
+        /// </summary>
+        private void ValidateJson()
+        {
+            JsonError = null;
+            IsValidJson = false;
+
+            if (Value == null || Type != ExtendedPrefType.String)
+            {
+                return;
+            }
+
+            var jsonString = Value.ToString();
+            if (string.IsNullOrWhiteSpace(jsonString))
+            {
+                IsValidJson = true;
+                return;
+            }
+
+            try
+            {
+                // Use Unity's built-in JSON utility for validation
+                // First try as object
+                JsonUtility.FromJson<object>(jsonString);
+                IsValidJson = true;
+            }
+            catch (ArgumentException ex)
+            {
+                try
+                {
+                    // Try as array if object parsing fails
+                    JsonUtility.FromJson<object[]>(jsonString);
+                    IsValidJson = true;
+                }
+                catch (ArgumentException)
+                {
+                    IsValidJson = false;
+                    JsonError = ex.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                IsValidJson = false;
+                JsonError = ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Formats JSON string for editing with proper indentation
+        /// </summary>
+        private string FormatJsonForEditing(string jsonString)
+        {
+            if (string.IsNullOrWhiteSpace(jsonString))
+                return jsonString;
+
+            try
+            {
+                return FormatJsonString(jsonString);
+            }
+            catch
+            {
+                // If formatting fails, return original string
+                return jsonString;
+            }
+        }
+
+        /// <summary>
+        /// Formats JSON string for display with truncation if needed
+        /// </summary>
+        private string FormatJsonForDisplay(string jsonString)
+        {
+            if (string.IsNullOrWhiteSpace(jsonString))
+                return jsonString;
+
+            try
+            {
+                var formatted = FormatJsonString(jsonString);
+                // Show first few lines for display
+                var lines = formatted.Split('\n');
+                if (lines.Length > 3)
+                {
+                    return string.Join("\n", lines, 0, 3) + "\n... (JSON)";
+                }
+                return formatted;
+            }
+            catch
+            {
+                // If formatting fails, return truncated original
+                return jsonString.Length > 50 ? jsonString.Substring(0, 47) + "..." : jsonString;
+            }
+        }
+
+        /// <summary>
+        /// Formats a JSON string with proper indentation
+        /// </summary>
+        private string FormatJsonString(string jsonString)
+        {
+            if (string.IsNullOrWhiteSpace(jsonString))
+                return jsonString;
+
+            var sb = new StringBuilder();
+            var indentLevel = 0;
+            var inString = false;
+            var escapeNext = false;
+
+            for (int i = 0; i < jsonString.Length; i++)
+            {
+                char c = jsonString[i];
+
+                if (escapeNext)
+                {
+                    sb.Append(c);
+                    escapeNext = false;
+                    continue;
+                }
+
+                if (c == '\\' && inString)
+                {
+                    sb.Append(c);
+                    escapeNext = true;
+                    continue;
+                }
+
+                if (c == '"')
+                {
+                    inString = !inString;
+                    sb.Append(c);
+                    continue;
+                }
+
+                if (inString)
+                {
+                    sb.Append(c);
+                    continue;
+                }
+
+                switch (c)
+                {
+                    case '{':
+                    case '[':
+                        sb.Append(c);
+                        sb.AppendLine();
+                        indentLevel++;
+                        sb.Append(new string(' ', indentLevel * 2));
+                        break;
+                    case '}':
+                    case ']':
+                        sb.AppendLine();
+                        indentLevel--;
+                        sb.Append(new string(' ', indentLevel * 2));
+                        sb.Append(c);
+                        break;
+                    case ',':
+                        sb.Append(c);
+                        sb.AppendLine();
+                        sb.Append(new string(' ', indentLevel * 2));
+                        break;
+                    case ':':
+                        sb.Append(c);
+                        sb.Append(' ');
+                        break;
+                    case ' ':
+                    case '\t':
+                    case '\r':
+                    case '\n':
+                        // Skip whitespace outside strings
+                        break;
+                    default:
+                        sb.Append(c);
+                        break;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Sets JSON mode for string types
+        /// </summary>
+        public void SetJsonMode(bool jsonMode)
+        {
+            if (Type != ExtendedPrefType.String)
+                return;
+
+            IsJsonMode = jsonMode;
+            UpdateDisplayValues();
+        }
+
+        /// <summary>
+        /// Checks if JSON mode is available for this entry
+        /// </summary>
+        public bool CanUseJsonMode()
+        {
+            return Type == ExtendedPrefType.String;
+        }
+
+        /// <summary>
+        /// Validates if the provided string is valid JSON
+        /// </summary>
+        public static bool IsValidJsonString(string jsonString)
+        {
+            if (string.IsNullOrWhiteSpace(jsonString))
+                return true;
+
+            try
+            {
+                JsonUtility.FromJson<object>(jsonString);
+                return true;
+            }
+            catch
+            {
+                try
+                {
+                    JsonUtility.FromJson<object[]>(jsonString);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
     }

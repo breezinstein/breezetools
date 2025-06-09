@@ -512,3 +512,95 @@
     padding: 4px 8px;
     border-radius: 4px;
 }
+
+/* JSON Functionality Styles */
+.json-toggle-button {
+    background-color: var(--unity-colors-button-background);
+    color: var(--unity-colors-button-text);
+    border-radius: 3px;
+    margin-left: 4px;
+    font-size: 11px;
+    padding: 2px 6px;
+    min-width: 32px;
+}
+
+.json-toggle-button:hover {
+    background-color: var(--unity-colors-button-background-hover);
+}
+
+.json-toggle-button.json-inactive {
+    background-color: #607d8b;
+    color: white;
+}
+
+.json-toggle-button.json-inactive:hover {
+    background-color: #546e7a;
+}
+
+.json-toggle-button.json-active {
+    background-color: #2196f3;
+    color: white;
+    -unity-font-style: bold;
+}
+
+.json-toggle-button.json-active:hover {
+    background-color: #1976d2;
+}
+
+.json-edit-field {
+    background-color: #2d2d30;
+    color: #cccccc;
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: #3c3c3c;
+    padding: 8px;
+    font-size: 12px;
+    white-space: pre;
+}
+
+.json-edit-field:focus {
+    border-color: #007acc;
+    border-width: 2px;
+}
+
+.json-edit-field .unity-text-element {
+    white-space: pre-wrap;
+}
+
+.json-error-label {
+    color: #f44336;
+    font-size: 11px;
+    background-color: rgba(244, 67, 54, 0.1);
+    padding: 4px 8px;
+    border-radius: 3px;
+    border-left-width: 3px;
+    border-left-color: #f44336;
+    margin-top: 4px;
+}
+
+/* JSON Mode PlayerPref Item Styling */
+.playerprefs-item.json-mode {
+    min-height: 120px;
+    align-items: flex-start;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.playerprefs-item.json-mode .value-label {
+    white-space: pre-wrap;
+    font-size: 11px;
+    background-color: #2d2d30;
+    color: #cccccc;
+    padding: 8px;
+    border-radius: 4px;
+    max-height: 80px;
+    overflow: hidden;
+}
+
+.type-string.json-mode .type-label {
+    background-color: #2196f3;
+    color: white;
+}
+
+/* Unity UI Elements doesn't support :after pseudo-class */
+/* The " JSON" text indicator will need to be handled in C# code instead */

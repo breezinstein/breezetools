@@ -18,12 +18,16 @@ namespace Breezinstein.Tools
         private Label typeLabel;
         private Label valueLabel;
         private TextField editField;
+        private TextField jsonEditField;
         private Button editButton;
         private Button saveButton;
         private Button cancelButton;
         private Button deleteButton;
+        private Button jsonToggleButton;
         private VisualElement editContainer;
+        private VisualElement jsonEditContainer;
         private VisualElement displayContainer;
+        private Label jsonErrorLabel;
 
         public PlayerPrefVisualElement()
         {
@@ -78,9 +82,19 @@ namespace Breezinstein.Tools
             valueLabel.style.textOverflow = TextOverflow.Ellipsis;
             valueLabel.AddToClassList("value-label");
             displayContainer.Add(valueLabel);
+
+            // JSON toggle button (only shown for strings)
+            jsonToggleButton = new Button(ToggleJsonMode) { text = "JSON" };
+            jsonToggleButton.style.width = 40;
+            jsonToggleButton.style.height = 20;
+            jsonToggleButton.style.marginLeft = 4;
+            jsonToggleButton.style.display = DisplayStyle.None;
+            jsonToggleButton.AddToClassList("json-toggle-button");
+            displayContainer.Add(jsonToggleButton);
+            
             Add(displayContainer);
 
-            // Edit container (hidden by default)
+            // Regular edit container (hidden by default)
             editContainer = new VisualElement();
             editContainer.style.flexGrow = 1;
             editContainer.style.flexDirection = FlexDirection.Row;
@@ -92,6 +106,31 @@ namespace Breezinstein.Tools
             editField.style.marginRight = 4;
             editContainer.Add(editField);
             Add(editContainer);
+
+            // JSON edit container (hidden by default)
+            jsonEditContainer = new VisualElement();
+            jsonEditContainer.style.flexGrow = 1;
+            jsonEditContainer.style.flexDirection = FlexDirection.Column;
+            jsonEditContainer.style.display = DisplayStyle.None;
+            
+            jsonEditField = new TextField();
+            jsonEditField.multiline = true;
+            jsonEditField.style.flexGrow = 1;
+            jsonEditField.style.minHeight = 100;
+            jsonEditField.style.marginRight = 4;
+            jsonEditField.style.marginBottom = 2;
+            jsonEditField.AddToClassList("json-edit-field");
+            
+            // JSON error label
+            jsonErrorLabel = new Label();
+            jsonErrorLabel.style.color = Color.red;
+            jsonErrorLabel.style.fontSize = 12;
+            jsonErrorLabel.style.display = DisplayStyle.None;
+            jsonErrorLabel.AddToClassList("json-error-label");
+            
+            jsonEditContainer.Add(jsonEditField);
+            jsonEditContainer.Add(jsonErrorLabel);
+            Add(jsonEditContainer);
 
             // Action buttons container
             var buttonContainer = new VisualElement();
@@ -128,8 +167,9 @@ namespace Breezinstein.Tools
 
             Add(buttonContainer);
 
-            // Setup keyboard events for edit field
+            // Setup keyboard events for edit fields
             editField.RegisterCallback<KeyDownEvent>(OnEditFieldKeyDown);
+            jsonEditField.RegisterCallback<KeyDownEvent>(OnEditFieldKeyDown);
         }
 
         public void SetData(PlayerPrefEntryData entryData, UnifiedPlayerPrefsEditor editorWindow)
@@ -152,10 +192,32 @@ namespace Breezinstein.Tools
             valueLabel.tooltip = data.DisplayValue;
             
             editField.value = data.EditValue;
+            jsonEditField.value = data.EditValue;
+
+            // Show/hide JSON toggle button for string types
+            if (data.CanUseJsonMode())
+            {
+                jsonToggleButton.style.display = DisplayStyle.Flex;
+                UpdateJsonToggleButton();
+            }
+            else
+            {
+                jsonToggleButton.style.display = DisplayStyle.None;
+            }
+
+            // Update JSON validation display
+            UpdateJsonValidation();
 
             // Add type-specific styling
             RemoveTypeClasses();
             AddToClassList($"type-{data.Type.ToString().ToLower()}");
+            
+            // Add JSON mode styling
+            RemoveFromClassList("json-mode");
+            if (data.IsJsonMode && data.CanUseJsonMode())
+            {
+                AddToClassList("json-mode");
+            }
         }
 
         private void RemoveTypeClasses()
@@ -172,14 +234,28 @@ namespace Breezinstein.Tools
             if (data == null) return;
 
             displayContainer.style.display = DisplayStyle.None;
-            editContainer.style.display = DisplayStyle.Flex;
+            
+            // Show appropriate edit container based on JSON mode
+            if (data.IsJsonMode && data.CanUseJsonMode())
+            {
+                jsonEditContainer.style.display = DisplayStyle.Flex;
+                editContainer.style.display = DisplayStyle.None;
+                jsonEditField.value = data.EditValue;
+                jsonEditField.Focus();
+                jsonEditField.SelectAll();
+            }
+            else
+            {
+                editContainer.style.display = DisplayStyle.Flex;
+                jsonEditContainer.style.display = DisplayStyle.None;
+                editField.value = data.EditValue;
+                editField.Focus();
+                editField.SelectAll();
+            }
+
             editButton.style.display = DisplayStyle.None;
             saveButton.style.display = DisplayStyle.Flex;
             cancelButton.style.display = DisplayStyle.Flex;
-
-            editField.value = data.EditValue;
-            editField.Focus();
-            editField.SelectAll();
 
             AddToClassList("editing");
         }
@@ -190,7 +266,27 @@ namespace Breezinstein.Tools
 
             try
             {
-                editor.UpdatePlayerPref(data.Key, editField.value, data.Type);
+                string valueToSave;
+                
+                if (data.IsJsonMode && data.CanUseJsonMode())
+                {
+                    valueToSave = jsonEditField.value;
+                    
+                    // Validate JSON before saving
+                    if (!string.IsNullOrWhiteSpace(valueToSave) && !PlayerPrefEntryData.IsValidJsonString(valueToSave))
+                    {
+                        EditorUtility.DisplayDialog("Invalid JSON",
+                            "The JSON content is not valid. Please fix the syntax errors before saving.",
+                            "OK");
+                        return;
+                    }
+                }
+                else
+                {
+                    valueToSave = editField.value;
+                }
+                
+                editor.UpdatePlayerPref(data.Key, valueToSave, data.Type);
                 EndEdit();
             }
             catch (Exception ex)
@@ -203,6 +299,7 @@ namespace Breezinstein.Tools
         {
             if (data == null) return;
             editField.value = data.EditValue;
+            jsonEditField.value = data.EditValue;
             EndEdit();
         }
 
@@ -210,6 +307,7 @@ namespace Breezinstein.Tools
         {
             displayContainer.style.display = DisplayStyle.Flex;
             editContainer.style.display = DisplayStyle.None;
+            jsonEditContainer.style.display = DisplayStyle.None;
             editButton.style.display = DisplayStyle.Flex;
             saveButton.style.display = DisplayStyle.None;
             cancelButton.style.display = DisplayStyle.None;
@@ -235,13 +333,65 @@ namespace Breezinstein.Tools
             {
                 case KeyCode.Return:
                 case KeyCode.KeypadEnter:
-                    SaveEdit();
-                    evt.StopPropagation();
+                    if (!evt.shiftKey) // Allow Shift+Enter for new lines in JSON mode
+                    {
+                        SaveEdit();
+                        evt.StopPropagation();
+                    }
                     break;
                 case KeyCode.Escape:
                     CancelEdit();
                     evt.StopPropagation();
                     break;
+            }
+        }
+
+        private void ToggleJsonMode()
+        {
+            if (data == null || !data.CanUseJsonMode()) return;
+
+            data.SetJsonMode(!data.IsJsonMode);
+            UpdateDisplay();
+        }
+
+        private void UpdateJsonToggleButton()
+        {
+            if (data == null || !data.CanUseJsonMode()) return;
+
+            jsonToggleButton.text = data.IsJsonMode ? "{}⚙" : "{}";
+            
+            // Update button styling based on JSON mode
+            jsonToggleButton.RemoveFromClassList("json-active");
+            jsonToggleButton.RemoveFromClassList("json-inactive");
+            
+            if (data.IsJsonMode)
+            {
+                jsonToggleButton.AddToClassList("json-active");
+                jsonToggleButton.tooltip = "Switch to text view";
+            }
+            else
+            {
+                jsonToggleButton.AddToClassList("json-inactive");
+                jsonToggleButton.tooltip = "Switch to JSON view";
+            }
+        }
+
+        private void UpdateJsonValidation()
+        {
+            if (data == null || !data.IsJsonMode || !data.CanUseJsonMode())
+            {
+                jsonErrorLabel.style.display = DisplayStyle.None;
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(data.JsonError))
+            {
+                jsonErrorLabel.text = $"JSON Error: {data.JsonError}";
+                jsonErrorLabel.style.display = DisplayStyle.Flex;
+            }
+            else
+            {
+                jsonErrorLabel.style.display = DisplayStyle.None;
             }
         }
     }
@@ -337,7 +487,7 @@ namespace Breezinstein.Tools
             }
         }
 
-        public void Clear()
+        public new void Clear()
         {
             if (searchField != null)
             {
