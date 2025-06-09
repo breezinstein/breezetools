@@ -74,13 +74,15 @@ namespace Breezinstein.Tools.TransformTools
             seedToggle.value = _useSeed;
             seedToggle.RegisterValueChangedCallback(evt => _useSeed = evt.newValue);
             section.Add(seedToggle);
-            
-            var seedField = new IntegerField("Seed");
+              var seedField = new IntegerField("Seed");
             seedField.value = _seed;
             seedField.RegisterValueChangedCallback(evt => _seed = evt.newValue);
             section.Add(seedField);
             
-            var randomSeedButton = new Button(() => _seed = Random.Range(0, 999999)) { text = "Random Seed" };
+            var randomSeedButton = new Button(() => {
+                _seed = Random.Range(0, 999999);
+                seedField.value = _seed;
+            }) { text = "Random Seed" };
             section.Add(randomSeedButton);
             
             parent.Add(section);

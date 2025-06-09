@@ -1,26 +1,61 @@
 .header {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     background-color: rgb(56, 56, 56);
     border-bottom-width: 1px;
     border-bottom-color: rgb(35, 35, 35);
-    padding: 10px;
+    padding: 10px 15px;
 }
 
 .title {
     font-size: 18px;
     font-style: bold;
     color: rgb(210, 210, 210);
-    margin-bottom: 10px;
 }
 
 .search-field {
     flex-grow: 1;
     margin-right: 5px;
+    min-width: 200px;
 }
 
 .search-button {
     width: 30px;
     height: 20px;
+}
+
+/* Tab container styles */
+.tab-container {
+    flex-direction: row;
+    background-color: rgb(51, 51, 51);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(35, 35, 35);
+    padding: 0 15px;
+    min-height: 35px;
+    align-items: flex-end;
+}
+
+.tab-button {
+    padding: 8px 15px;
+    margin-right: 2px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-width: 0;
+    background-color: rgb(64, 64, 64);
+    color: rgb(200, 200, 200);
+    border-width: 0;
+    transition-duration: 0.1s;
+}
+
+.tab-button:hover {
+    background-color: rgb(70, 70, 70);
+    color: rgb(220, 220, 220);
+}
+
+.tab-button.selected {
+    background-color: rgb(102, 102, 102);
+    color: rgb(255, 255, 255);
 }
 
 .sidebar {
@@ -41,9 +76,11 @@
     flex-grow: 1;
 }
 
-.tools-area {
-    padding: 10px;
+/* Tab content area */
+.tab-content-area {
+    padding: 15px;
     background-color: rgb(42, 42, 42);
+    flex-grow: 1;
 }
 
 .tools-scroll {
