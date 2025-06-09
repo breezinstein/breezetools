@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements">
+    <engine:VisualElement name="root" class="root-container">
+        <!-- Header -->
+        <engine:VisualElement name="header" class="header">
+            <engine:Label text="Unified PlayerPrefs Editor" class="title" />
+            <engine:Label text="Advanced PlayerPrefs management with extended type support" class="subtitle" />
+        </engine:VisualElement>
+
+        <!-- Toolbar -->
+        <engine:VisualElement name="toolbar" class="main-toolbar">
+            <!-- Search Section -->
+            <engine:VisualElement name="search-section" class="toolbar-section">
+                <engine:Label text="Search:" class="toolbar-label" />
+                <engine:TextField name="search-field" class="search-field" placeholder-text="Enter search term..." />
+                <engine:DropdownField name="filter-dropdown" class="filter-dropdown" />
+                <engine:Toggle name="auto-refresh-toggle" text="Auto Refresh" class="auto-refresh-toggle" />
+            </engine:VisualElement>
+
+            <!-- Action Buttons -->
+            <engine:VisualElement name="action-section" class="toolbar-section toolbar-actions">
+                <engine:Button name="refresh-button" text="Refresh" class="toolbar-button refresh-button" />
+                <engine:VisualElement class="toolbar-spacer" />
+                <engine:Button name="import-button" text="Import" class="toolbar-button import-button" />
+                <engine:Button name="export-button" text="Export" class="toolbar-button export-button" />
+                <engine:VisualElement class="toolbar-spacer" />
+                <engine:Button name="delete-all-button" text="Delete All" class="toolbar-button delete-all-button danger-button" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- Add New Entry Section -->
+        <engine:VisualElement name="add-section" class="add-section">
+            <engine:Label text="Add New PlayerPref" class="section-title" />
+            <engine:VisualElement name="add-container" class="add-container">
+                <engine:VisualElement name="add-left" class="add-left">
+                    <engine:TextField name="key-field" label="Key" class="key-field" placeholder-text="Enter key name..." />
+                    <engine:DropdownField name="type-dropdown" label="Type" class="type-dropdown" />
+                </engine:VisualElement>
+                <engine:VisualElement name="add-right" class="add-right">
+                    <engine:TextField name="value-field" label="Value" class="value-field" placeholder-text="Enter value..." />
+                    <engine:Button name="add-button" text="Add PlayerPref" class="add-button primary-button" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- Content Section -->
+        <engine:VisualElement name="content" class="content">
+            <!-- List Header -->
+            <engine:VisualElement name="list-header" class="list-header">
+                <engine:Label text="Key" class="header-label key-header" />
+                <engine:Label text="Type" class="header-label type-header" />
+                <engine:Label text="Value" class="header-label value-header" />
+                <engine:Label text="Actions" class="header-label actions-header" />
+            </engine:VisualElement>
+
+            <!-- PlayerPrefs ListView -->
+            <engine:ListView name="playerprefs-listview" class="playerprefs-listview" />
+        </engine:VisualElement>
+
+        <!-- Status Bar -->
+        <engine:VisualElement name="status-bar" class="status-bar">
+            <engine:Label name="status-label" text="Ready" class="status-label" />
+            <engine:ProgressBar name="progress-bar" class="progress-bar" style="display: none;" />
+            <engine:Label name="count-label" text="0 items" class="count-label" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
