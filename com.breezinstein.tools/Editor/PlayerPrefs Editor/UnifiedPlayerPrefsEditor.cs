@@ -42,7 +42,7 @@ namespace Breezinstein.Tools
         private double lastRefreshTime = 0;
         private const double REFRESH_INTERVAL = 2.0; // seconds
         
-        [MenuItem("Breeze Tools/Unified PlayerPrefs Editor")]
+        [MenuItem("Breeze Tools/PlayerPrefs Editor")]
         public static void ShowWindow()
         {
             var window = GetWindow<UnifiedPlayerPrefsEditor>("Unified PlayerPrefs Editor");
