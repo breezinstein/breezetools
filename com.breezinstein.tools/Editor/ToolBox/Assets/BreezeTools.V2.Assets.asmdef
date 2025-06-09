@@ -1,0 +1,19 @@
+{
+    "name": "Breezinstein.Tools.Assets",
+    "rootNamespace": "Breezinstein.Tools.Assets",
+    "references": [
+        "Breezinstein.Tools.Core",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

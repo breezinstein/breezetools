@@ -1,0 +1,22 @@
+{
+    "name": "Breezinstein.Tools.Editor.Toolbox",
+    "rootNamespace": "",
+    "references": [
+        "Breezinstein.Tools.Core",
+        "Breezinstein.Tools.TransformTools",
+        "Breezinstein.Tools.Assets",
+        "Breezinstein.Tools.Scene",
+        "Breezinstein.Tools.Components"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

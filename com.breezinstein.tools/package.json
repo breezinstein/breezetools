@@ -1,16 +1,24 @@
 {
   "name": "com.breezinstein.tools",
-  "version": "0.0.5",
+  "version": "2.0.0",
   "displayName": "Breeze's Tools",
-  "description": "A collection of helper tools for building games in Unity",
-  "unity": "2022.1",
+  "description": "Comprehensive Unity Editor Toolkit - Advanced Transform Tools, Asset Management, Scene Organization, and Component Workflows",
+  "unity": "2022.3",
   "documentationUrl": "https://example.com/",
   "changelogUrl": "https://example.com/changelog.html",
   "licensesUrl": "https://example.com/licensing.html",
   "keywords": [
     "audio",
     "ui",
-    "screenshot"
+    "screenshot",
+    "editor-tools",
+    "transform",
+    "assets",
+    "prefabs",
+    "scene-management",
+    "components",
+    "productivity",
+    "workflow"
   ],
   "author": {
     "name": "breezinstein",
