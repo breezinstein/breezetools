@@ -28,6 +28,9 @@
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "2.0.0"
   },
+  "testables": [
+    "BreezeTools.Tests"
+  ],
   "samples": [
     {
       "displayName": "Demo",
