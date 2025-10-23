@@ -1,8 +1,8 @@
 {
   "name": "com.breezinstein.tools",
-  "version": "2.0.0",
+  "version": "3.0.1",
   "displayName": "Breeze's Tools",
-  "description": "Comprehensive Unity Editor Toolkit - Advanced Transform Tools, Asset Management, Scene Organization, and Component Workflows",
+  "description": "Comprehensive Unity Editor Toolkit - Advanced Transform Tools, Asset Management, Scene Organization, and Component Workflows. Now with modern UI Toolkit interface for Unity 6.2+",
   "unity": "2022.3",
   "documentationUrl": "https://example.com/",
   "changelogUrl": "https://example.com/changelog.html",
