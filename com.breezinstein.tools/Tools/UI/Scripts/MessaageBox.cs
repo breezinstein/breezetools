@@ -6,7 +6,7 @@ using TMPro;
 
 namespace Breezinstein.Tools.UI
 {
-    public class MessaageBox : MonoBehaviour
+    public class MessageBox : MonoBehaviour
     {
 		public TextMeshProUGUI headerText;
 

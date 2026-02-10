@@ -15,7 +15,7 @@ namespace Breezinstein.Tools.UI
         public string buttonCancelSound;
         Window currentOpenWindow;
 
-        public MessaageBox messageBox;
+        public MessageBox messageBox;
         public bool messageBoxOpen;
 
         public GameObject loadingObject;
