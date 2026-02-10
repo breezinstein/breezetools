@@ -1,0 +1,190 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">    
+    <ui:ScrollView name="main-scroll-view" class="main-container">
+        <!-- Header -->
+        <ui:VisualElement class="header-container">
+            <ui:Label text="Breeze's Toolbox" class="main-title" />
+            <ui:Label text="Essential utilities for Unity object manipulation and scene management" class="subtitle" />
+        </ui:VisualElement>
+
+        <!-- Pivot Utilities Section -->
+        <ui:Foldout text="Pivot Utilities" class="section-foldout" name="pivot-foldout">
+            <ui:VisualElement class="section-content">
+                <ui:Label text="Modify object pivot points without affecting visual appearance" class="section-description" />
+                <ui:VisualElement class="button-row">
+                    <ui:Button text="Center Pivot" name="center-pivot-btn" class="action-button" />
+                    <ui:Button text="Pivot to Base" name="pivot-to-base-btn" class="action-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:Foldout>
+
+        <!-- Randomizer Section -->
+        <ui:Foldout text="Randomizer" class="section-foldout" name="randomizer-foldout">
+            <ui:VisualElement class="section-content">
+                <ui:Label text="Add controlled variation to selected objects" class="section-description" />
+                
+                <!-- Rotation Subsection -->
+                <ui:Foldout text="Random Rotation" class="subsection-foldout" name="rotation-foldout">
+                    <ui:VisualElement class="subsection-content">
+                        <ui:VisualElement class="checkbox-row">
+                            <ui:Toggle label="X" name="rot-x-toggle" />
+                            <ui:Toggle label="Y" name="rot-y-toggle" />
+                            <ui:Toggle label="Z" name="rot-z-toggle" />
+                        </ui:VisualElement>
+                        <uie:Vector3Field label="Min Rotation" name="min-rotation" />
+                        <uie:Vector3Field label="Max Rotation" name="max-rotation" />
+                        <ui:Button text="Apply Rotation" name="apply-rotation-btn" class="action-button" />
+                    </ui:VisualElement>
+                </ui:Foldout>
+
+                <!-- Position Subsection -->
+                <ui:Foldout text="Random Position" class="subsection-foldout" name="position-foldout">
+                    <ui:VisualElement class="subsection-content">
+                        <ui:VisualElement class="checkbox-row">
+                            <ui:Toggle label="X" name="pos-x-toggle" />
+                            <ui:Toggle label="Y" name="pos-y-toggle" />
+                            <ui:Toggle label="Z" name="pos-z-toggle" />
+                        </ui:VisualElement>
+                        <uie:Vector3Field label="Min Position" name="min-position" />
+                        <uie:Vector3Field label="Max Position" name="max-position" />
+                        <ui:Button text="Apply Position" name="apply-position-btn" class="action-button" />
+                    </ui:VisualElement>
+                </ui:Foldout>
+
+                <!-- Scale Subsection -->
+                <ui:Foldout text="Random Scale" class="subsection-foldout" name="scale-foldout">
+                    <ui:VisualElement class="subsection-content">
+                        <ui:VisualElement class="checkbox-row">
+                            <ui:Toggle label="Uniform" name="uniform-scale-toggle" value="true" />
+                            <ui:Toggle label="Per Axis" name="per-axis-scale-toggle" />
+                        </ui:VisualElement>
+                        <uie:Vector3Field label="Min Scale" name="min-scale" />
+                        <uie:Vector3Field label="Max Scale" name="max-scale" />
+                        <ui:Button text="Apply Scale" name="apply-scale-btn" class="action-button" />
+                    </ui:VisualElement>
+                </ui:Foldout>
+            </ui:VisualElement>
+        </ui:Foldout>
+
+        <!-- Distribute Section -->
+        <ui:Foldout text="Distribute" class="section-foldout" name="distribute-foldout">
+            <ui:VisualElement class="section-content">
+                <ui:Label text="Create organized arrays with precise control" class="section-description" />
+                
+                <!-- Linear Arrays -->
+                <ui:Label text="Linear Arrays" class="subsection-title" />
+                <ui:VisualElement class="button-row">
+                    <ui:Button text="X Array" name="x-array-btn" class="action-button" />
+                    <ui:Button text="Y Array" name="y-array-btn" class="action-button" />
+                    <ui:Button text="Z Array" name="z-array-btn" class="action-button" />
+                </ui:VisualElement>
+
+                <!-- Radial Array -->
+                <ui:Label text="Radial Array" class="subsection-title" />
+                <uie:FloatField label="Radius" name="radial-radius" value="5" />
+                <uie:FloatField label="Start Angle" name="radial-start-angle" value="0" />
+                <uie:FloatField label="End Angle" name="radial-end-angle" value="360" />
+                <ui:Toggle label="Face Center" name="radial-face-center" value="true" />
+                <ui:Button text="Create Radial Array" name="radial-array-btn" class="action-button" />
+
+                <!-- Preview -->
+                <ui:VisualElement class="preview-row">
+                    <ui:Toggle label="Preview Mode" name="preview-toggle" />
+                    <ui:Button text="Apply Preview" name="apply-preview-btn" class="action-button secondary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:Foldout>
+
+        <!-- Populate Section -->
+        <ui:Foldout text="Populate" class="section-foldout" name="populate-foldout">
+            <ui:VisualElement class="section-content">
+                <ui:Label text="Intelligently populate scenes with objects" class="section-description" />
+                
+                <!-- Surface Detection -->
+                <ui:Label text="Surface Detection" class="subsection-title" />
+                <uie:LayerMaskField label="Surface Layers" name="surface-layers" />
+                <uie:FloatField label="Surface Angle Limit" name="surface-angle-limit" value="45" />
+                <ui:Toggle label="Align to Normal" name="align-to-normal" value="true" />
+
+                <!-- Placement Rules -->
+                <ui:Label text="Placement Rules" class="subsection-title" />
+                <uie:IntegerField label="Object Count" name="object-count" value="10" />
+                <uie:FloatField label="Min Spacing" name="min-spacing" value="1" />
+                <uie:FloatField label="Max Spacing" name="max-spacing" value="5" />
+
+                <!-- Prefab Selection -->
+                <ui:Label text="Prefab Selection" class="subsection-title" />
+                <uie:ObjectField label="Primary Prefab" name="primary-prefab" type="UnityEngine.GameObject" />
+                <ui:VisualElement name="secondary-prefabs-container">
+                    <!-- Secondary prefabs will be added dynamically -->
+                </ui:VisualElement>
+                <ui:Button text="Add Secondary Prefab" name="add-secondary-prefab-btn" class="action-button secondary" />
+
+                <!-- Actions -->
+                <ui:VisualElement class="button-row">
+                    <ui:Button text="Populate Scene" name="populate-btn" class="action-button" />
+                    <ui:Button text="Clear Population" name="clear-population-btn" class="action-button secondary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:Foldout>
+
+        <!-- Replace Selected Section -->
+        <ui:Foldout text="Replace Selected" class="section-foldout" name="replace-selected-foldout">
+            <ui:VisualElement class="section-content">
+                <ui:Label text="Batch replace components and assets on selected objects" class="section-description" />
+                
+                <!-- Game Object Replacement -->
+                <ui:Label text="Game Object" class="subsection-title" />
+                <uie:ObjectField label="Replace With" name="replace-gameobject" type="UnityEngine.GameObject" />
+                <ui:Toggle label="Maintain Position" name="maintain-position" value="true" />
+                <ui:Toggle label="Maintain Rotation" name="maintain-rotation" value="true" />
+                <ui:Toggle label="Maintain Scale" name="maintain-scale" value="false" />
+                <ui:Button text="Replace Objects" name="replace-objects-btn" class="action-button" />
+
+                <!-- Font Replacement -->
+                <ui:Label text="Font" class="subsection-title" />
+                <uie:ObjectField label="New Font" name="replace-font" type="UnityEngine.Font" />
+                <ui:Button text="Replace Font" name="replace-font-btn" class="action-button" />
+
+                <!-- Material Replacement -->
+                <ui:Label text="Material" class="subsection-title" />
+                <uie:ObjectField label="New Material" name="replace-material" type="UnityEngine.Material" />
+                <ui:Button text="Replace Material" name="replace-material-btn" class="action-button" />
+            </ui:VisualElement>
+        </ui:Foldout>
+
+        <!-- Replace in Scene Section -->
+        <ui:Foldout text="Replace in Scene" class="section-foldout" name="replace-scene-foldout">
+            <ui:VisualElement class="section-content">
+                <ui:Label text="Global replacement tools for entire scenes" class="section-description" />
+                
+                <!-- Font Replacement -->
+                <ui:Label text="Font Replacement" class="subsection-title" />
+                <uie:ObjectField label="Find Font" name="find-font" type="UnityEngine.Font" />
+                <uie:ObjectField label="Replace With" name="scene-replace-font" type="UnityEngine.Font" />
+                <ui:Button text="Replace All Fonts" name="replace-all-fonts-btn" class="action-button" />
+
+                <!-- Material Replacement -->
+                <ui:Label text="Material Replacement" class="subsection-title" />
+                <uie:ObjectField label="Find Material" name="find-material" type="UnityEngine.Material" />
+                <uie:ObjectField label="Replace With" name="scene-replace-material" type="UnityEngine.Material" />
+                <ui:Button text="Replace All Materials" name="replace-all-materials-btn" class="action-button" />
+            </ui:VisualElement>
+        </ui:Foldout>
+
+        <!-- Missing Reference Helper Section -->
+        <ui:Foldout text="Missing Reference Helper" class="section-foldout" name="missing-ref-foldout">
+            <ui:VisualElement class="section-content">
+                <ui:Label text="Identify missing script references" class="section-description" />
+                <ui:Button text="Find Missing References" name="find-missing-refs-btn" class="action-button" />
+                <ui:VisualElement name="missing-refs-results" class="results-container">
+                    <!-- Results will be populated dynamically -->
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:Foldout>
+
+        <!-- Footer -->
+        <ui:VisualElement class="footer-container">
+            <ui:Label text="v3.0 - Enhanced for Unity 6.2 with UI Toolkit" class="footer-text" />
+        </ui:VisualElement>
+    </ui:ScrollView>
+</ui:UXML>

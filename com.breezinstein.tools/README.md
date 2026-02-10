@@ -1,11 +1,136 @@
-# Breeze's Tools
+# Breeze's Tools v3.0 - Unity Editor Toolkit
 
-A comprehensive collection of helper tools designed to accelerate game development in Unity. This package provides modular, reusable components that address common development needs across audio management, UI systems, procedural name generation, and general utilities.
+A comprehensive Unity Editor extension built with UI Toolkit, providing essential utilities for streamlining object manipulation, scene management, and workflow optimization in Unity 6.2+.
 
-![Version](https://img.shields.io/badge/version-0.0.5-blue.svg)
-![Unity](https://img.shields.io/badge/unity-2022.1%2B-blue.svg)
+![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
+![Unity](https://img.shields.io/badge/unity-2022.3%2B%20%7C%206.2%2B-blue.svg)
 
-## Features
+## ✨ New in v3.0 - UI Toolkit Edition
+
+This major release rebuilds the entire BreezeToolBox interface using Unity's modern UI Toolkit, providing:
+- **Modern Interface**: Responsive, theme-aware UI built with UXML/USS
+- **Enhanced Preview System**: Real-time visual feedback for all operations
+- **Improved Performance**: Better integration with Unity 6.2+ systems
+- **Extended Functionality**: New features for advanced scene management
+
+## 🎯 Core Features
+
+### Pivot Utilities
+Transform object pivot points without affecting visual appearance:
+- **Center Pivot**: Automatically centers pivot point within object bounds
+- **Pivot to Base**: Moves pivot point to object bottom (perfect for props and characters)
+
+### 🎲 Randomizer
+Add controlled variation to selected objects with granular control:
+- **Random Rotation**: Per-axis rotation randomization with custom ranges
+- **Random Position**: Offset positions with configurable constraints
+- **Random Scale**: Uniform or per-axis scaling with defined limits
+
+### 📐 Distribute
+Create organized object arrays with precision:
+- **Linear Arrays**: X, Y, Z axis distribution
+- **Radial Arrays**: Circular arrangements with custom radius and angles
+- **Preview Mode**: Visualize arrangements before applying with hologram preview
+- **Face Center**: Option for radial arrays to orient objects toward center
+
+### 🌱 Populate (Advanced)
+Intelligent scene population system:
+- **Surface Detection**: Smart placement on detected surfaces
+- **Placement Rules**: Density control, spacing constraints, normal alignment
+- **Multi-Prefab Support**: Weighted distribution across multiple prefabs
+- **Collision Avoidance**: Prevent overlapping with existing objects
+- **Layer-Based Filtering**: Target specific surface types
+
+### 🔄 Replace Selected
+Batch replacement tools for selected objects:
+- **Game Objects**: Swap with different prefabs while maintaining transforms
+- **Fonts**: Update Text component fonts across selections
+- **Materials**: Replace materials on Renderer components
+
+### 🌍 Replace in Scene
+Global replacement for entire scenes:
+- **Font Replacement**: Find and replace all instances of specific fonts
+- **Material Replacement**: Global material swapping with match detection
+
+### 🔍 Missing Reference Helper
+Diagnostic tools for scene health:
+- **Missing Script Detection**: Identify broken component references
+- **Prefab Connection Repair**: Fix broken prefab links
+- **Detailed Reporting**: Clear visualization of issues found
+
+## 🚀 Quick Start
+
+### Installation
+1. Add the package to your Unity project via Package Manager
+2. Access via `Window > Breeze Tools > Toolbox v3`
+
+### First Use
+1. Open the toolbox window
+2. Select objects in your scene
+3. Choose a tool section (Randomizer, Distribute, etc.)
+4. Configure settings and preview results
+5. Apply changes with full undo support
+
+## 🛠️ Technical Requirements
+
+- **Unity Version**: 2022.3+ (Optimized for Unity 6.2+)
+- **Dependencies**: 
+  - UI Toolkit (UnityEngine.UIElementsModule)
+  - Editor UI Elements (UnityEditor.UIElementsModule)
+  - Newtonsoft JSON 2.0.0+
+
+## 📖 Usage Examples
+
+### Quick Object Randomization
+```csharp
+// Access via Window > Breeze Tools > Toolbox v3
+// 1. Select objects in scene
+// 2. Open Randomizer section
+// 3. Configure rotation/position/scale ranges
+// 4. Apply transformations with undo support
+```
+
+### Creating Radial Arrays
+```csharp
+// 1. Select objects to arrange
+// 2. Open Distribute > Radial Array
+// 3. Set radius, start/end angles
+// 4. Enable preview mode to visualize
+// 5. Apply when satisfied with arrangement
+```
+
+### Scene-Wide Material Updates
+```csharp
+// 1. Open Replace in Scene > Material
+// 2. Assign source and target materials
+// 3. Execute replacement across all scene objects
+```
+
+## 🎨 Customization
+
+The tool uses USS styling for complete visual customization. Edit `BreezeToolBox.uss` to modify:
+- Color schemes and theming
+- Layout spacing and sizing
+- Typography and font styles
+- Interactive states and animations
+
+## 🔧 Development & Extension
+
+### Architecture
+- **UXML**: Declarative UI layout (`BreezeToolBox.uxml`)
+- **USS**: Styling and theming (`BreezeToolBox.uss`)
+- **C#**: Logic and Unity integration (`BreezeToolBox.cs`)
+
+### Extension Points
+The modular design allows for easy feature additions:
+- Add new sections to UXML
+- Extend the main class with new functionality
+- Customize styling via USS
+- Integrate with existing editor workflows
+
+## 📝 Complete Feature Set
+
+In addition to the new BreezeToolBox v3.0, this package includes:
 
 ### Audio System
 - Complete audio management with Unity Audio Mixer integration
@@ -33,117 +158,41 @@ A comprehensive collection of helper tools designed to accelerate game developme
 - Safe area handling for different devices
 - UI and image utilities
 
-## Installation
+## 📝 Changelog
 
-### Via Unity Package Manager (Recommended)
+### v3.0.0 (Current) - BreezeToolBox UI Toolkit Edition
+- **BREAKING**: Complete UI Toolkit rebuild for Unity 6.2+ compatibility
+- **NEW**: Enhanced preview system with visual feedback
+- **NEW**: Advanced populate system with surface detection
+- **NEW**: Modern, responsive interface design
+- **NEW**: Comprehensive missing reference detection
+- **IMPROVED**: Better undo/redo integration
+- **IMPROVED**: Performance optimizations
+- **IMPROVED**: Accessibility and usability enhancements
 
-1. Open the Unity Package Manager (Window > Package Manager)
-2. Click the "+" button and select "Add package from git URL..."
-3. Enter the repository URL: `https://github.com/yourusername/com.breezinstein.tools.git`
-4. Click "Add"
+### Previous Versions
+- v2.0.0: Basic IMGUI implementation with core utilities
+- v1.x: Initial release with fundamental features
 
-### Manual Installation
+## 🤝 Contributing
 
-1. Download the latest release from the repository
-2. Extract the contents into your project's `Packages` directory
-3. The package should be automatically detected by Unity
+This tool is part of the Breeze Tools ecosystem. For feature requests or bug reports:
+- Open issues on the repository
+- Submit pull requests for improvements
+- Share usage examples and workflows
 
-## Dependencies
+## 📜 License
 
-- Newtonsoft.Json (2.0.0 or higher) - Automatically installed via the Package Manager
+See [LICENSE.md](LICENSE.md) for licensing information.
 
-## Quick Start Guide
+## 🔗 Links
 
-### Audio System
+- **Documentation**: [Comprehensive Guide](Documentation~/BreezeToolBox_v3.md)
+- **Repository**: GitHub repository link
+- **Support**: Issue tracker and community support
+- **Related Projects**: Unity UI Extensions, DOTween, TextMeshPro
 
-```csharp
-// Create an AudioManager in your scene
-GameObject audioManagerObj = new GameObject("Audio Manager");
-AudioManager audioManager = audioManagerObj.AddComponent<AudioManager>();
+---
 
-// Create an AudioLibrary asset
-// (Assets > Create > Breeze Tools > Audio > Create Audio Library)
-// Assign it to the AudioManager
-
-// Play sounds
-AudioManager.PlaySoundEffect("explosion");
-AudioManager.PlayMusic("background_theme");
-```
-
-### UI Window System
-
-```csharp
-// Create a WindowManager in your scene
-GameObject windowManagerObj = new GameObject("Window Manager");
-WindowManager windowManager = windowManagerObj.AddComponent<WindowManager>();
-
-// Create windows as children of the WindowManager
-// Each window should have the Window component attached
-
-// Open windows by ID or name
-WindowManager.Instance.OpenWindow(1);
-WindowManager.Instance.OpenWindow("MainMenu");
-```
-
-### Name Generation
-
-```csharp
-// Generate random names
-string singleName = NameGen.GenerateRandomSingleName;
-string doubleName = NameGen.GenerateRandomDoubleName;
-string username = NameGen.GenerateRandomUsername;
-```
-
-### Utility Examples
-
-```csharp
-// Serialization
-MyData data = new MyData();
-string json = data.Serialize();
-MyData loadedData = json.Deserialize<MyData>();
-
-// File operations
-BreezeHelper.SaveFile("save_data", json);
-string loadedJson = BreezeHelper.LoadFile("save_data");
-
-// Event system
-EventManager<GameEvent>.Register("PlayerDied", OnPlayerDied);
-EventManager<GameEvent>.Trigger("PlayerDied", new GameEvent("PlayerDied", playerPosition));
-```
-
-
-## Documentation
-
-For detailed documentation, please refer to the [comprehensive documentation](com.breezinstein.tools-documentation.md) included with this package.
-
-## Extending the Package
-
-The package is designed to be extended in various ways:
-
-- Create custom window types by inheriting from `Window`
-- Extend the audio system with custom behaviors
-- Create custom event types for the `EventManager`
-- Extend `SerializableDictionary` for custom data types
-
-## Roadmap
-
-- Enhanced audio visualization tools
-- Additional UI components and layouts
-- Improved documentation and examples
-- Performance optimizations
-
-## License
-
-See the [LICENSE.md](LICENSE.md) file for details.
-
-## Support
-
-- GitHub repository: [https://github.com/yourusername/com.breezinstein.tools](https://github.com/yourusername/com.breezinstein.tools)
-- Documentation: [https://example.com/](https://example.com/)
-- Issue tracker: [https://github.com/yourusername/com.breezinstein.tools/issues](https://github.com/yourusername/com.breezinstein.tools/issues)
-
-## Related Projects
-
-- Unity UI Extensions: [https://github.com/Unity-UI-Extensions/com.unity.uiextensions](https://github.com/Unity-UI-Extensions/com.unity.uiextensions)
-- DOTween: [http://dotween.demigiant.com/](http://dotween.demigiant.com/)
-- TextMeshPro: [https://docs.unity3d.com/Manual/com.unity.textmeshpro.html](https://docs.unity3d.com/Manual/com.unity.textmeshpro.html)
+**Developed by breezinstein | Twin Crown Studios**  
+*Enhancing Unity workflows since 2023*

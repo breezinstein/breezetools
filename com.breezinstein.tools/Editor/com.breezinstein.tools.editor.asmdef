@@ -3,7 +3,9 @@
     "rootNamespace": "",
     "references": [
         "GUID:f6e14e7f41352ce458310dc3c74dd351",
-        "GUID:6c4f7108de3aed145b4b1a6608d051bc"
+        "GUID:6c4f7108de3aed145b4b1a6608d051bc",
+        "UnityEngine.UIElementsModule",
+        "UnityEditor.UIElementsModule"
     ],
     "includePlatforms": [
         "Editor"
