@@ -96,6 +96,18 @@ namespace BreezeTools.Editor.IconGenerator
                 Vector3 isolatedPosition = new Vector3(10000, 10000, 10000);
                 instance.transform.position = isolatedPosition;
                 
+                // Apply position offset if enabled
+                if (settings.usePrefabPositionOffset)
+                {
+                    instance.transform.position += settings.prefabPositionOffset;
+                }
+                
+                // Apply rotation offset if enabled
+                if (settings.usePrefabRotationOffset)
+                {
+                    instance.transform.rotation = Quaternion.Euler(settings.prefabRotationOffset) * instance.transform.rotation;
+                }
+                
                 // Get all renderers to calculate bounds
                 Renderer[] renderers = instance.GetComponentsInChildren<Renderer>();
                 

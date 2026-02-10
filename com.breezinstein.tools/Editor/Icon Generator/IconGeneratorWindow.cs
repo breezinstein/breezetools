@@ -319,6 +319,50 @@ namespace BreezeTools.Editor.IconGenerator
                 StyleField(zoomSlider);
                 content.Add(zoomSlider);
                 
+                // Prefab Transform Overrides
+                var transformLabel = new Label("Prefab Transform Overrides");
+                transformLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+                transformLabel.style.marginTop = 10;
+                transformLabel.style.fontSize = 12;
+                transformLabel.style.color = new StyleColor(new Color(0.8f, 0.8f, 0.8f, 1f));
+                content.Add(transformLabel);
+                
+                var positionOffsetToggle = new Toggle("Use Position Offset");
+                positionOffsetToggle.value = settings.usePrefabPositionOffset;
+                positionOffsetToggle.RegisterValueChangedCallback(evt =>
+                {
+                    settings.usePrefabPositionOffset = evt.newValue;
+                    RefreshPrefabPositionOffsetVisibility();
+                });
+                StyleField(positionOffsetToggle);
+                content.Add(positionOffsetToggle);
+                
+                var positionOffsetField = new Vector3Field("Position Offset");
+                positionOffsetField.value = settings.prefabPositionOffset;
+                positionOffsetField.RegisterValueChangedCallback(evt => settings.prefabPositionOffset = evt.newValue);
+                positionOffsetField.style.display = settings.usePrefabPositionOffset ? DisplayStyle.Flex : DisplayStyle.None;
+                positionOffsetField.name = "prefabPositionOffsetField";
+                StyleField(positionOffsetField);
+                content.Add(positionOffsetField);
+                
+                var rotationOffsetToggle = new Toggle("Use Rotation Offset");
+                rotationOffsetToggle.value = settings.usePrefabRotationOffset;
+                rotationOffsetToggle.RegisterValueChangedCallback(evt =>
+                {
+                    settings.usePrefabRotationOffset = evt.newValue;
+                    RefreshPrefabRotationOffsetVisibility();
+                });
+                StyleField(rotationOffsetToggle);
+                content.Add(rotationOffsetToggle);
+                
+                var rotationOffsetField = new Vector3Field("Rotation Offset");
+                rotationOffsetField.value = settings.prefabRotationOffset;
+                rotationOffsetField.RegisterValueChangedCallback(evt => settings.prefabRotationOffset = evt.newValue);
+                rotationOffsetField.style.display = settings.usePrefabRotationOffset ? DisplayStyle.Flex : DisplayStyle.None;
+                rotationOffsetField.name = "prefabRotationOffsetField";
+                StyleField(rotationOffsetField);
+                content.Add(rotationOffsetField);
+                
                 // Output settings
                 var outputLabel = new Label("Output Settings");
                 outputLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
@@ -729,6 +773,24 @@ namespace BreezeTools.Editor.IconGenerator
             if (field != null)
             {
                 field.style.display = settings.outputPathMode == OutputPathMode.CustomFolder ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+        }
+        
+        private void RefreshPrefabPositionOffsetVisibility()
+        {
+            var field = rootVisualElement.Q<Vector3Field>("prefabPositionOffsetField");
+            if (field != null)
+            {
+                field.style.display = settings.usePrefabPositionOffset ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+        }
+        
+        private void RefreshPrefabRotationOffsetVisibility()
+        {
+            var field = rootVisualElement.Q<Vector3Field>("prefabRotationOffsetField");
+            if (field != null)
+            {
+                field.style.display = settings.usePrefabRotationOffset ? DisplayStyle.Flex : DisplayStyle.None;
             }
         }
         

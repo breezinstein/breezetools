@@ -22,6 +22,12 @@ namespace BreezeTools.Editor.IconGenerator
         public Vector3 cameraRotation = new Vector3(15f, -30f, 0f);
         public float cameraZoom = 1f;
         
+        [Header("Prefab Transform Overrides")]
+        public bool usePrefabPositionOffset = false;
+        public Vector3 prefabPositionOffset = Vector3.zero;
+        public bool usePrefabRotationOffset = false;
+        public Vector3 prefabRotationOffset = Vector3.zero;
+        
         [Header("Output Settings")]
         public OutputPathMode outputPathMode = OutputPathMode.MirrorPrefabPath;
         public string customOutputFolder = "Assets/GeneratedIcons";
