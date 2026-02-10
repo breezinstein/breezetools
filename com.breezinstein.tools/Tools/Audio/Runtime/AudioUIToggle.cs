@@ -53,6 +53,9 @@ namespace Breezinstein.Tools.Audio
                 case AudioManager.AudioSourceType.MAIN:
                     buttonIcon.sprite = AudioManager.Settings.MainEnabled ? onSprite : offSprite;
                     break;
+                case AudioManager.AudioSourceType.VOICE:
+                    buttonIcon.sprite = AudioManager.Settings.VoiceEnabled ? onSprite : offSprite;
+                    break;
                 default:
                     break;
             }

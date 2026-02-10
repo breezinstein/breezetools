@@ -12,10 +12,12 @@ namespace Breezinstein.Tools.Audio
         public bool MusicEnabled = true;
         public bool EffectsEnabled = true;
         public bool MainEnabled = true;
+        public bool VoiceEnabled = true;
 
         private protected float musicVolume = 1f;
         private protected float effectsVolume = 1f;
         private protected float mainVolume = 1f;
+        private protected float voiceVolume = 1f;
 
         /// <summary>
         /// Gets or sets the music volume.
@@ -42,6 +44,15 @@ namespace Breezinstein.Tools.Audio
         {
             get => MainEnabled ? mainVolume : MIN_VOLUME;
             set => mainVolume = MainEnabled ? value : mainVolume;
+        }
+
+        /// <summary>
+        /// Gets or sets the voice volume.
+        /// </summary>
+        public float VoiceVolume
+        {
+            get => VoiceEnabled ? voiceVolume : MIN_VOLUME;
+            set => voiceVolume = VoiceEnabled ? value : voiceVolume;
         }
 
         /// <summary>
@@ -82,10 +93,12 @@ namespace Breezinstein.Tools.Audio
             MusicEnabled = true;
             EffectsEnabled = true;
             MainEnabled = true;
+            VoiceEnabled = true;
 
             musicVolume = 1;
             effectsVolume = 1;
             mainVolume = 1;
+            voiceVolume = 1;
 
             Save(this);
 

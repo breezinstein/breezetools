@@ -37,10 +37,12 @@ namespace Breezinstein.Tools.Audio
 
         private AudioSource m_EffectsSource;
         private AudioSource m_MusicSource;
+        private AudioSource m_VoiceSource;
 
         [SerializeField] private AudioMixer m_AudioMixer;
         private AudioMixerGroup m_MusicGroup;
         private AudioMixerGroup m_EffectsGroup;
+        private AudioMixerGroup m_VoiceGroup;
 
         public static AudioManager Instance;
 
@@ -58,9 +60,11 @@ namespace Breezinstein.Tools.Audio
 
             m_MusicGroup = m_AudioMixer.FindMatchingGroups("BGM")[0];
             m_EffectsGroup = m_AudioMixer.FindMatchingGroups("SFX")[0];
+            m_VoiceGroup = m_AudioMixer.FindMatchingGroups("Voice")[0];
 
             m_EffectsSource = CreateAudioSource(AudioSourceType.EFFECT);
             m_MusicSource = CreateAudioSource(AudioSourceType.MUSIC);
+            m_VoiceSource = CreateAudioSource(AudioSourceType.VOICE);
             UpdateVolumes();
 
         }
@@ -73,6 +77,7 @@ namespace Breezinstein.Tools.Audio
             m_AudioMixer.SetFloat("MainVolume", Mathf.Log10(Settings.MainVolume) * 20);
             m_MusicGroup.audioMixer.SetFloat("BGMVolume", Mathf.Log10(Settings.MusicVolume) * 20);
             m_EffectsGroup.audioMixer.SetFloat("SFXVolume", Mathf.Log10(Settings.EffectsVolume) * 20);
+            m_VoiceGroup.audioMixer.SetFloat("VoiceVolume", Mathf.Log10(Settings.VoiceVolume) * 20);
         }
 
         /// <summary>
@@ -91,6 +96,9 @@ namespace Breezinstein.Tools.Audio
                     break;
                 case AudioSourceType.MAIN:
                     Settings.MainVolume = volume;
+                    break;
+                case AudioSourceType.VOICE:
+                    Settings.VoiceVolume = volume;
                     break;
                 default:
                     break;
@@ -114,6 +122,9 @@ namespace Breezinstein.Tools.Audio
                     break;
                 case AudioSourceType.MAIN:
                     Settings.MainEnabled = !Settings.MainEnabled;
+                    break;
+                case AudioSourceType.VOICE:
+                    Settings.VoiceEnabled = !Settings.VoiceEnabled;
                     break;
                 default:
                     break;
@@ -141,6 +152,11 @@ namespace Breezinstein.Tools.Audio
                     source.name = "effects source";
                     source.playOnAwake = false;
                     source.outputAudioMixerGroup = m_EffectsGroup;
+                    break;
+                case AudioSourceType.VOICE:
+                    source.name = "voice source";
+                    source.playOnAwake = false;
+                    source.outputAudioMixerGroup = m_VoiceGroup;
                     break;
                 default:
                     break;
@@ -191,6 +207,24 @@ namespace Breezinstein.Tools.Audio
         }
 
         /// <summary>
+        /// Plays a voice clip with the specified clip name.
+        /// </summary>
+        public static void PlayVoice(string clipName)
+        {
+            Instance.UpdateVolumes();
+            AudioItem item = GetAudioClip(clipName);
+            Instance.m_VoiceSource.PlayOneShot(item.clip, item.volume);
+        }
+
+        /// <summary>
+        /// Stops the voice.
+        /// </summary>
+        public static void StopVoice()
+        {
+            Instance.m_VoiceSource.Stop();
+        }
+
+        /// <summary>
         /// Gets a random audio clip of the specified category.
         /// </summary>
         private static AudioClip GetRandomAudioClip(AudioCategory category)
@@ -231,8 +265,9 @@ namespace Breezinstein.Tools.Audio
         public enum AudioSourceType
         {
             MUSIC = 0,
-            EFFECT,
-            MAIN
+            EFFECT = 1,
+            MAIN = 2,
+            VOICE = 3
         }
     }
 }

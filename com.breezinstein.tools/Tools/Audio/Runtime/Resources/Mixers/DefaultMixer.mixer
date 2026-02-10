@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!244 &-8901234567890123456
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6
+  m_EffectName: Attenuation
+  m_MixLevel: f6e5d4c3b2a19f8e7d6c5b4a39281716
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!244 &-7688541205022411152
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -47,6 +61,25 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
+--- !u!243 &-4567890123456789012
+AudioMixerGroupController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Voice
+  m_AudioMixer: {fileID: 24100000}
+  m_GroupID: 1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d
+  m_Children: []
+  m_Volume: 9f8e7d6c5b4a39281716f5e4d3c2b1a0
+  m_Pitch: 0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d
+  m_Send: 00000000000000000000000000000000
+  m_Effects:
+  - {fileID: -8901234567890123456}
+  m_UserColorIndex: 0
+  m_Mute: 0
+  m_Solo: 0
+  m_BypassEffects: 0
 --- !u!243 &-3897058398588562388
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -88,11 +121,14 @@ AudioMixerController:
     name: MainVolume
   - guid: b658fdaceac572d408f890e4bdaf1771
     name: SFXVolume
+  - guid: 9f8e7d6c5b4a39281716f5e4d3c2b1a0
+    name: VoiceVolume
   m_AudioMixerGroupViews:
   - guids:
     - 6399b70425fbbe946a3ed57841b15668
     - 90e185a20e4fcd0459fbe4d931923de6
     - 5c15516ca5706ad4aab8cde83fe988a4
+    - 1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d
     name: View
   m_CurrentViewIndex: 0
   m_TargetSnapshot: {fileID: 24500006}
@@ -108,6 +144,7 @@ AudioMixerGroupController:
   m_Children:
   - {fileID: -3897058398588562388}
   - {fileID: -7673570707406874618}
+  - {fileID: -4567890123456789012}
   m_Volume: a380065e85fa3cc4ca297363833cccf6
   m_Pitch: a71acfbe45984704eb473d10bc3cb267
   m_Send: 00000000000000000000000000000000

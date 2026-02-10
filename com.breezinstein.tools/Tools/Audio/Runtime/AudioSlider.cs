@@ -62,6 +62,12 @@ namespace Breezinstein.Tools.Audio
                         slider.value = AudioManager.Settings.MainVolume;
                     }
                     break;
+                case AudioManager.AudioSourceType.VOICE:
+                    if (AudioManager.Settings.VoiceEnabled)
+                    {
+                        slider.value = AudioManager.Settings.VoiceVolume;
+                    }
+                    break;
                 default:
                     break;
             }
