@@ -19,7 +19,7 @@ namespace Breezinstein.Tools.Audio
         /// <summary>
         /// The category of the audio item.
         /// </summary>
-        public AudioCategory category;
+        public AudioManager.AudioSourceType category;
 
         /// <summary>
         /// The audio clip associated with the audio item.
@@ -32,9 +32,4 @@ namespace Breezinstein.Tools.Audio
         [Range(0.0f, 1.0f)]
         public float volume = 1f;
     }
-
-    /// <summary>
-    /// Represents the category of an audio item.
-    /// </summary>
-    public enum AudioCategory { EFFECT, MUSIC }
 }

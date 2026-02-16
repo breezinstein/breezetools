@@ -194,7 +194,7 @@ namespace Breezinstein.Tools.Audio
         {
             Instance.UpdateVolumes();
             // TODO play random music
-            Instance.m_MusicSource.clip = GetRandomAudioClip(AudioCategory.MUSIC);
+            Instance.m_MusicSource.clip = GetRandomAudioClip(AudioSourceType.MUSIC);
             Instance.m_MusicSource.Play();
         }
 
@@ -227,7 +227,7 @@ namespace Breezinstein.Tools.Audio
         /// <summary>
         /// Gets a random audio clip of the specified category.
         /// </summary>
-        private static AudioClip GetRandomAudioClip(AudioCategory category)
+        private static AudioClip GetRandomAudioClip(AudioSourceType category)
         {
             //Get all clips of that category
             List<AudioItem> clips = new List<AudioItem>();
