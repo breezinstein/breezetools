@@ -47,6 +47,9 @@ namespace Breezinstein.Tools
         // Preview system
         private List<GameObject> previewObjects = new List<GameObject>();
         private Material previewMaterial;
+        
+        // Populate tracking
+        private List<GameObject> populatedObjects = new List<GameObject>();
 
         [MenuItem("Breeze Tools/Toolbox v3")]
         static void Init()
@@ -723,15 +726,236 @@ namespace Breezinstein.Tools
                 return;
             }
 
-            // Implementation for scene population would go here
-            // This is a complex feature that would require raycasting, collision detection, etc.
-            EditorUtility.DisplayDialog("Populate Scene", "Population feature implementation in progress.", "OK");
+            var selectedObjects = Selection.gameObjects;
+            if (selectedObjects.Length == 0)
+            {
+                EditorUtility.DisplayDialog("No Selection", "Please select at least one GameObject in the scene to define the population area bounds.", "OK");
+                return;
+            }
+
+            // Get all prefabs to spawn
+            var allPrefabs = GetAllPrefabs();
+            if (allPrefabs.Count == 0)
+            {
+                EditorUtility.DisplayDialog("No Prefabs", "No valid prefabs available for spawning.", "OK");
+                return;
+            }
+
+            // Calculate bounds from selected objects
+            var selectedTransforms = selectedObjects.Select(go => go.transform).ToArray();
+            var bounds = CalculatePopulationBounds(selectedTransforms);
+
+            if (bounds.size == Vector3.zero)
+            {
+                EditorUtility.DisplayDialog("Invalid Bounds", "Could not calculate valid bounds from selected objects.", "OK");
+                return;
+            }
+
+            // Create parent object for organization
+            var timestamp = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            var parentObject = new GameObject($"Population_{timestamp}");
+            Undo.RegisterCreatedObjectUndo(parentObject, "Create Population Parent");
+
+            int objectCount = objectCountField.value;
+            float minSpacing = minSpacingField.value;
+            float maxSpacing = maxSpacingField.value;
+            float surfaceAngleLimit = surfaceAngleLimitField.value;
+            int surfaceLayers = surfaceLayersField.value;
+            bool alignToNormal = alignToNormalToggle.value;
+
+            var spawnedPositions = new List<Vector3>();
+            int spawnedCount = 0;
+            int maxAttemptsPerObject = 100;
+
+            try
+            {
+                for (int i = 0; i < objectCount; i++)
+                {
+                    EditorUtility.DisplayProgressBar("Populating Scene", $"Spawning object {i + 1} of {objectCount}", (float)i / objectCount);
+
+                    bool spawned = false;
+                    for (int attempt = 0; attempt < maxAttemptsPerObject && !spawned; attempt++)
+                    {
+                        // Generate random XZ position within bounds
+                        float randomX = Random.Range(bounds.min.x, bounds.max.x);
+                        float randomZ = Random.Range(bounds.min.z, bounds.max.z);
+                        float raycastHeight = bounds.max.y + 10f;
+
+                        Vector3 rayOrigin = new Vector3(randomX, raycastHeight, randomZ);
+                        RaycastHit hit;
+
+                        // Raycast downward to find surface
+                        if (Physics.Raycast(rayOrigin, Vector3.down, out hit, raycastHeight - bounds.min.y + 20f, surfaceLayers))
+                        {
+                            // Check surface angle
+                            float surfaceAngle = Vector3.Angle(hit.normal, Vector3.up);
+                            if (surfaceAngle > surfaceAngleLimit)
+                            {
+                                continue; // Surface too steep
+                            }
+
+                            // Check spacing against already spawned objects
+                            float requiredSpacing = Random.Range(minSpacing, maxSpacing);
+                            bool tooClose = false;
+                            foreach (var pos in spawnedPositions)
+                            {
+                                if (Vector3.Distance(hit.point, pos) < requiredSpacing)
+                                {
+                                    tooClose = true;
+                                    break;
+                                }
+                            }
+
+                            if (tooClose)
+                            {
+                                continue; // Too close to another object
+                            }
+
+                            // Select random prefab
+                            var prefabToSpawn = allPrefabs[Random.Range(0, allPrefabs.Count)];
+
+                            // Instantiate prefab
+                            var spawnedObject = PrefabUtility.InstantiatePrefab(prefabToSpawn) as GameObject;
+                            if (spawnedObject != null)
+                            {
+                                spawnedObject.transform.position = hit.point;
+
+                                // Align to surface normal if enabled
+                                if (alignToNormal)
+                                {
+                                    spawnedObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                                }
+
+                                // Parent under organization object
+                                spawnedObject.transform.SetParent(parentObject.transform);
+
+                                // Register for undo
+                                Undo.RegisterCreatedObjectUndo(spawnedObject, "Spawn Population Object");
+
+                                // Track spawned object
+                                populatedObjects.Add(spawnedObject);
+                                spawnedPositions.Add(hit.point);
+                                spawnedCount++;
+                                spawned = true;
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
+
+            Debug.Log($"Population complete: Spawned {spawnedCount} of {objectCount} requested objects.");
         }
 
         private void ClearPopulation()
         {
-            // Implementation for clearing populated objects
-            EditorUtility.DisplayDialog("Clear Population", "Clear population feature implementation in progress.", "OK");
+            if (populatedObjects.Count == 0)
+            {
+                EditorUtility.DisplayDialog("Nothing to Clear", "No populated objects to clear.", "OK");
+                return;
+            }
+
+            Undo.SetCurrentGroupName("Clear Population");
+            int undoGroup = Undo.GetCurrentGroup();
+
+            foreach (var obj in populatedObjects)
+            {
+                if (obj != null)
+                {
+                    Undo.DestroyObjectImmediate(obj);
+                }
+            }
+
+            populatedObjects.Clear();
+            Undo.CollapseUndoOperations(undoGroup);
+
+            Debug.Log("Population cleared.");
+        }
+
+        private List<GameObject> GetAllPrefabs()
+        {
+            var prefabs = new List<GameObject>();
+
+            var primaryPrefab = primaryPrefabField.value as GameObject;
+            if (primaryPrefab != null)
+            {
+                prefabs.Add(primaryPrefab);
+            }
+
+            foreach (var field in secondaryPrefabFields)
+            {
+                var secondaryPrefab = field.value as GameObject;
+                if (secondaryPrefab != null)
+                {
+                    prefabs.Add(secondaryPrefab);
+                }
+            }
+
+            return prefabs;
+        }
+
+        private Bounds CalculatePopulationBounds(Transform[] selectedTransforms)
+        {
+            if (selectedTransforms == null || selectedTransforms.Length == 0)
+            {
+                return new Bounds();
+            }
+
+            Bounds bounds = new Bounds();
+            bool boundsInitialized = false;
+
+            foreach (var transform in selectedTransforms)
+            {
+                if (transform == null) continue;
+
+                // Try to get bounds from Renderer
+                var renderer = transform.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    if (!boundsInitialized)
+                    {
+                        bounds = renderer.bounds;
+                        boundsInitialized = true;
+                    }
+                    else
+                    {
+                        bounds.Encapsulate(renderer.bounds);
+                    }
+                    continue;
+                }
+
+                // Try to get bounds from Collider
+                var collider = transform.GetComponent<Collider>();
+                if (collider != null)
+                {
+                    if (!boundsInitialized)
+                    {
+                        bounds = collider.bounds;
+                        boundsInitialized = true;
+                    }
+                    else
+                    {
+                        bounds.Encapsulate(collider.bounds);
+                    }
+                    continue;
+                }
+
+                // Fallback: use transform position
+                if (!boundsInitialized)
+                {
+                    bounds = new Bounds(transform.position, Vector3.one);
+                    boundsInitialized = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(transform.position);
+                }
+            }
+
+            return bounds;
         }
         #endregion
 
