@@ -100,9 +100,9 @@ namespace Breezinstein.Tools
                 Dictionary<TKey, uint> kp = KeyPositions;
                 kp.Remove(key);
 
-                int numEntries = list.Count;
-
                 list.RemoveAt((int)index);
+                
+                int numEntries = list.Count;
                 for (uint i = index; i < numEntries; i++)
                     kp[list[(int)i].Key] = i;
 

@@ -217,6 +217,22 @@ namespace Breezinstein.Tools.Audio
         }
 
         /// <summary>
+        /// Plays a voice clip directly from an AudioClip reference.
+        /// Stops any currently playing voice before starting the new one.
+        /// </summary>
+        /// <param name="clip">The AudioClip to play.</param>
+        /// <param name="volume">Volume scale (0-1). Defaults to 1.</param>
+        public static void PlayVoiceClip(AudioClip clip, float volume = 1f)
+        {
+            if (Instance == null || clip == null) return;
+            Instance.UpdateVolumes();
+            Instance.m_VoiceSource.Stop();
+            Instance.m_VoiceSource.clip = clip;
+            Instance.m_VoiceSource.volume = volume;
+            Instance.m_VoiceSource.Play();
+        }
+
+        /// <summary>
         /// Stops the voice.
         /// </summary>
         public static void StopVoice()
