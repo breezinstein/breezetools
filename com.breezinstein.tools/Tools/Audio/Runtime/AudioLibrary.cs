@@ -31,5 +31,10 @@ namespace Breezinstein.Tools.Audio
         /// </summary>
         [Range(0.0f, 1.0f)]
         public float volume = 1f;
+
+        /// <summary>
+        /// Optional description of when and how this clip is used.
+        /// </summary>
+        public string description = "";
     }
 }

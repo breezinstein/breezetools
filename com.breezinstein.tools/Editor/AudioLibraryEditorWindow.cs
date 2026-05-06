@@ -23,6 +23,7 @@ namespace Breezinstein.Tools.Audio.Editor
         private AudioManager.AudioSourceType newClipCategory = AudioManager.AudioSourceType.EFFECT;
         private AudioClip newClipAudio;
         private float newClipVolume = 1f;
+        private string newClipDescription = "";
         
         // Category names for display
         private readonly string[] categoryNames = { "All", "MUSIC", "EFFECT", "MAIN", "VOICE" };
@@ -33,6 +34,7 @@ namespace Breezinstein.Tools.Audio.Editor
         private bool exportCategory = true;
         private bool exportClipName = false;
         private bool exportVolume = false;
+        private bool exportDescription = false;
         
         // Styles
         private GUIStyle headerStyle;
@@ -202,7 +204,8 @@ namespace Breezinstein.Tools.Audio.Editor
                     
                     foreach (var kvp in filteredClips)
                     {
-                        EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+                        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                        EditorGUILayout.BeginHorizontal();
                         
                         // Name (read-only), with warning if no clip is assigned
                         if (kvp.Value.clip == null)
@@ -273,6 +276,21 @@ namespace Breezinstein.Tools.Audio.Editor
                         }
                         
                         EditorGUILayout.EndHorizontal();
+                        
+                        // Description row
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("Desc:", EditorStyles.miniLabel, GUILayout.Width(40));
+                        EditorGUI.BeginChangeCheck();
+                        var newDesc = EditorGUILayout.TextField(kvp.Value.description ?? "", EditorStyles.miniTextField);
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            Undo.RecordObject(selectedLibrary, "Change Audio Description");
+                            kvp.Value.description = newDesc;
+                            EditorUtility.SetDirty(selectedLibrary);
+                        }
+                        EditorGUILayout.EndHorizontal();
+                        
+                        EditorGUILayout.EndVertical();
                     }
                     
                     // Handle deletion outside the loop
@@ -294,10 +312,12 @@ namespace Breezinstein.Tools.Audio.Editor
             
             foreach (var kvp in selectedLibrary.clips)
             {
-                // Apply search filter
+                // Apply search filter (key and description)
                 if (!string.IsNullOrEmpty(searchFilter))
                 {
-                    if (!kvp.Key.ToLower().Contains(searchFilter.ToLower()))
+                    string lowerFilter = searchFilter.ToLower();
+                    if (!kvp.Key.ToLower().Contains(lowerFilter) &&
+                        !(kvp.Value.description ?? "").ToLower().Contains(lowerFilter))
                     {
                         continue;
                     }
@@ -346,6 +366,12 @@ namespace Breezinstein.Tools.Audio.Editor
             
             EditorGUILayout.LabelField("Volume:", GUILayout.Width(50));
             newClipVolume = EditorGUILayout.Slider(newClipVolume, 0f, 1f, GUILayout.Width(120));
+            EditorGUILayout.EndHorizontal();
+            
+            // Third row: Description
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Desc:", GUILayout.Width(40));
+            newClipDescription = EditorGUILayout.TextField(newClipDescription);
             EditorGUILayout.EndHorizontal();
             
             EditorGUILayout.Space(5);
@@ -398,7 +424,8 @@ namespace Breezinstein.Tools.Audio.Editor
             {
                 category = newClipCategory,
                 clip = newClipAudio,
-                volume = newClipVolume
+                volume = newClipVolume,
+                description = newClipDescription
             };
             
             selectedLibrary.clips.Add(newClipKey, newItem);
@@ -408,6 +435,7 @@ namespace Breezinstein.Tools.Audio.Editor
             newClipKey = "";
             newClipAudio = null;
             newClipVolume = 1f;
+            newClipDescription = "";
             
             // Focus on key field for quick entry
             GUI.FocusControl(null);
@@ -483,6 +511,7 @@ namespace Breezinstein.Tools.Audio.Editor
             exportCategory = EditorGUILayout.ToggleLeft("Category", exportCategory, GUILayout.Width(80));
             exportClipName = EditorGUILayout.ToggleLeft("Clip Name", exportClipName, GUILayout.Width(100));
             exportVolume = EditorGUILayout.ToggleLeft("Volume", exportVolume, GUILayout.Width(80));
+            exportDescription = EditorGUILayout.ToggleLeft("Desc", exportDescription, GUILayout.Width(60));
             
             GUILayout.FlexibleSpace();
             
@@ -523,7 +552,7 @@ namespace Breezinstein.Tools.Audio.Editor
             }
             
             // Check if at least one option is selected
-            if (!exportName && !exportCategory && !exportClipName && !exportVolume)
+            if (!exportName && !exportCategory && !exportClipName && !exportVolume && !exportDescription)
             {
                 EditorUtility.DisplayDialog("Export Error", "Please select at least one field to export.", "OK");
                 return;
@@ -564,6 +593,9 @@ namespace Breezinstein.Tools.Audio.Editor
                 
                 if (exportVolume)
                     properties.Add($"\"volume\": {kvp.Value.volume}");
+                
+                if (exportDescription)
+                    properties.Add($"\"description\": \"{EscapeJson(kvp.Value.description ?? string.Empty)}\"");
                 
                 jsonBuilder.Append(string.Join(", ", properties));
                 jsonBuilder.Append("}");
