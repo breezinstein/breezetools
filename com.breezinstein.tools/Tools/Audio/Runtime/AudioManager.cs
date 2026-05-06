@@ -35,6 +35,7 @@ namespace Breezinstein.Tools.Audio
         }
 
         public AudioLibrary AudioLibrary;
+        [SerializeField] private bool logPlayedClips = false;
 
         private AudioSource m_EffectsSource;
         private AudioSource m_MusicSource;
@@ -214,17 +215,21 @@ namespace Breezinstein.Tools.Audio
         /// <summary>
         /// Configures and plays an AudioSource with the given item's clip and volume.
         /// </summary>
-        private static void PlaySfxSource(AudioSource source, AudioItem item)
+        private static void PlaySfxSource(AudioSource source, AudioItem item, float volumeScale = 1f)
         {
             source.clip = item.clip;
-            source.volume = item.volume;
+            source.volume = item.volume * volumeScale;
             source.Play();
+            if (Instance.logPlayedClips)
+            {
+                Debug.Log($"Playing SFX: {item.clip.name} at volume {item.volume * volumeScale}");
+            }
         }
 
         /// <summary>
         /// Plays a sound effect with the specified clip name (2D, non-positional).
         /// </summary>
-        public static void PlaySoundEffect(string clipName)
+        public static void PlaySoundEffect(string clipName, float volumeScale = 1f)
         {
             if (Instance == null) return;
             AudioItem item = GetAudioClip(clipName);
@@ -233,7 +238,7 @@ namespace Breezinstein.Tools.Audio
             AudioSource source = Instance.GetAvailableSfxSource();
             source.spatialBlend = 0f;
             source.transform.localPosition = Vector3.zero;
-            PlaySfxSource(source, item);
+            PlaySfxSource(source, item, volumeScale);
         }
 
         /// <summary>
@@ -241,7 +246,8 @@ namespace Breezinstein.Tools.Audio
         /// </summary>
         /// <param name="clipName">Name of the clip registered in the AudioLibrary.</param>
         /// <param name="position">World-space position to play the sound at.</param>
-        public static void PlaySoundEffect(string clipName, Vector3 position)
+        /// <param name="volumeScale">Volume scale (0-1). Defaults to 1.</param>
+        public static void PlaySoundEffect(string clipName, Vector3 position, float volumeScale = 1f)
         {
             if (Instance == null) return;
             AudioItem item = GetAudioClip(clipName);
@@ -250,7 +256,7 @@ namespace Breezinstein.Tools.Audio
             AudioSource source = Instance.GetAvailableSfxSource();
             source.spatialBlend = 1f;
             source.transform.position = position;
-            PlaySfxSource(source, item);
+            PlaySfxSource(source, item, volumeScale);
         }
 
         /// <summary>
@@ -264,6 +270,10 @@ namespace Breezinstein.Tools.Audio
             Instance.m_MusicSource.clip = item.clip;
             Instance.m_MusicSource.volume = item.volume;
             Instance.m_MusicSource.Play();
+            if (Instance.logPlayedClips)
+            {
+                Debug.Log($"Playing Music: {item.clip.name} at volume {item.volume}");
+            }
         }
 
         /// <summary>
@@ -275,6 +285,10 @@ namespace Breezinstein.Tools.Audio
             // TODO play random music
             Instance.m_MusicSource.clip = GetRandomAudioClip(AudioSourceType.MUSIC);
             Instance.m_MusicSource.Play();
+            if (Instance.logPlayedClips)
+            {
+                Debug.Log($"Playing Random Music: {Instance.m_MusicSource.clip.name}");
+            }
         }
 
         /// <summary>
@@ -283,16 +297,25 @@ namespace Breezinstein.Tools.Audio
         public static void StopMusic()
         {
             Instance.m_MusicSource.Stop();
+            if (Instance.logPlayedClips)            {
+                Debug.Log("Stopping Music");
+            }
         }
 
         /// <summary>
         /// Plays a voice clip with the specified clip name.
         /// </summary>
-        public static void PlayVoice(string clipName)
+        /// <param name="clipName">Name of the clip registered in the AudioLibrary.</param>
+        /// <param name="volumeScale">Volume scale (0-1). Defaults to 1.</param>
+        public static void PlayVoice(string clipName, float volumeScale = 1f)
         {
             Instance.UpdateVolumes();
             AudioItem item = GetAudioClip(clipName);
-            Instance.m_VoiceSource.PlayOneShot(item.clip, item.volume);
+            Instance.m_VoiceSource.PlayOneShot(item.clip, item.volume * volumeScale);
+            if (Instance.logPlayedClips)
+            {
+                Debug.Log($"Playing Voice: {item.clip.name} at volume {item.volume * volumeScale}");
+            }
         }
 
         /// <summary>
@@ -309,6 +332,10 @@ namespace Breezinstein.Tools.Audio
             Instance.m_VoiceSource.clip = clip;
             Instance.m_VoiceSource.volume = volume;
             Instance.m_VoiceSource.Play();
+            if (Instance.logPlayedClips)
+            {
+                Debug.Log($"Playing Voice Clip: {clip.name} at volume {volume}");
+            }
         }
 
         /// <summary>
