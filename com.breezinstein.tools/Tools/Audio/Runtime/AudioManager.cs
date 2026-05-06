@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -39,6 +40,11 @@ namespace Breezinstein.Tools.Audio
         private AudioSource m_MusicSource;
         private AudioSource m_VoiceSource;
 
+        private const int INITIAL_SFX_POOL_SIZE = 4;
+        private readonly List<AudioSource> m_SfxPool = new List<AudioSource>();
+        private Transform m_SfxPoolParent;
+        private int m_SfxPoolSourceCount = 0;
+
         [SerializeField] private AudioMixer m_AudioMixer;
         private AudioMixerGroup m_MusicGroup;
         private AudioMixerGroup m_EffectsGroup;
@@ -65,6 +71,15 @@ namespace Breezinstein.Tools.Audio
             m_EffectsSource = CreateAudioSource(AudioSourceType.EFFECT);
             m_MusicSource = CreateAudioSource(AudioSourceType.MUSIC);
             m_VoiceSource = CreateAudioSource(AudioSourceType.VOICE);
+
+            // Initialize SFX pool
+            m_SfxPoolParent = new GameObject("SFX Pool").transform;
+            m_SfxPoolParent.SetParent(transform);
+            for (int i = 0; i < INITIAL_SFX_POOL_SIZE; i++)
+            {
+                m_SfxPool.Add(CreatePooledSfxSource());
+            }
+
             UpdateVolumes();
 
         }
@@ -165,13 +180,77 @@ namespace Breezinstein.Tools.Audio
         }
 
         /// <summary>
-        /// Plays a sound effect with the specified clip name.
+        /// Creates a pooled AudioSource for sound effects.
+        /// </summary>
+        private AudioSource CreatePooledSfxSource()
+        {
+            var go = new GameObject($"sfx_pool_{m_SfxPoolSourceCount++}");
+            go.transform.SetParent(m_SfxPoolParent);
+            var source = go.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.outputAudioMixerGroup = m_EffectsGroup;
+            source.spatialBlend = 0f; // default 2D
+            return source;
+        }
+
+        /// <summary>
+        /// Gets an available (non-playing) AudioSource from the SFX pool,
+        /// growing the pool if all sources are busy.
+        /// </summary>
+        private AudioSource GetAvailableSfxSource()
+        {
+            for (int i = 0; i < m_SfxPool.Count; i++)
+            {
+                if (!m_SfxPool[i].isPlaying)
+                    return m_SfxPool[i];
+            }
+
+            // All sources are busy – expand the pool
+            var source = CreatePooledSfxSource();
+            m_SfxPool.Add(source);
+            return source;
+        }
+
+        /// <summary>
+        /// Configures and plays an AudioSource with the given item's clip and volume.
+        /// </summary>
+        private static void PlaySfxSource(AudioSource source, AudioItem item)
+        {
+            source.clip = item.clip;
+            source.volume = item.volume;
+            source.Play();
+        }
+
+        /// <summary>
+        /// Plays a sound effect with the specified clip name (2D, non-positional).
         /// </summary>
         public static void PlaySoundEffect(string clipName)
         {
-            Instance.UpdateVolumes();
+            if (Instance == null) return;
             AudioItem item = GetAudioClip(clipName);
-            Instance.m_EffectsSource.PlayOneShot(item.clip, item.volume);
+            if (item == null) return;
+
+            AudioSource source = Instance.GetAvailableSfxSource();
+            source.spatialBlend = 0f;
+            source.transform.localPosition = Vector3.zero;
+            PlaySfxSource(source, item);
+        }
+
+        /// <summary>
+        /// Plays a sound effect with the specified clip name at a world-space position (3D spatial).
+        /// </summary>
+        /// <param name="clipName">Name of the clip registered in the AudioLibrary.</param>
+        /// <param name="position">World-space position to play the sound at.</param>
+        public static void PlaySoundEffect(string clipName, Vector3 position)
+        {
+            if (Instance == null) return;
+            AudioItem item = GetAudioClip(clipName);
+            if (item == null) return;
+
+            AudioSource source = Instance.GetAvailableSfxSource();
+            source.spatialBlend = 1f;
+            source.transform.position = position;
+            PlaySfxSource(source, item);
         }
 
         /// <summary>
