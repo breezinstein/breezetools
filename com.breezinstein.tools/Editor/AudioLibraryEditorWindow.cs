@@ -204,8 +204,16 @@ namespace Breezinstein.Tools.Audio.Editor
                     {
                         EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
                         
-                        // Name (read-only)
-                        EditorGUILayout.LabelField(kvp.Key, GUILayout.MinWidth(120));
+                        // Name (read-only), with warning if no clip is assigned
+                        if (kvp.Value.clip == null)
+                        {
+                            var warningStyle = new GUIStyle(EditorStyles.label) { normal = { textColor = new Color(0.9f, 0.6f, 0f) } };
+                            EditorGUILayout.LabelField("⚠ " + kvp.Key, warningStyle, GUILayout.MinWidth(120));
+                        }
+                        else
+                        {
+                            EditorGUILayout.LabelField(kvp.Key, GUILayout.MinWidth(120));
+                        }
                         
                         // Category dropdown
                         EditorGUI.BeginChangeCheck();
@@ -358,13 +366,12 @@ namespace Breezinstein.Tools.Audio.Editor
             }
             else if (newClipAudio == null)
             {
-                canAdd = false;
-                validationMessage = "Please assign an AudioClip.";
+                validationMessage = "No AudioClip assigned — entry will be added without a clip.";
             }
             
             if (!string.IsNullOrEmpty(validationMessage))
             {
-                EditorGUILayout.HelpBox(validationMessage, MessageType.Warning);
+                EditorGUILayout.HelpBox(validationMessage, canAdd ? MessageType.Info : MessageType.Warning);
             }
             
             // Add button
