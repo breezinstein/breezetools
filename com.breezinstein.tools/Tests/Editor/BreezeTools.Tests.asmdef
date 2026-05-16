@@ -28,5 +28,6 @@
             "define": "BREEZINSTEIN_HAS_SPLINES"
         }
     ],
+    "versionDefines": [],
     "noEngineReferences": false
 }
