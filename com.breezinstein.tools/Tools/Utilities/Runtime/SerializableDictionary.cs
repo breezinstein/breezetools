@@ -67,7 +67,7 @@ namespace Breezinstein.Tools
             set
             {
                 if (KeyPositions.TryGetValue(key, out uint index))
-                    list[(int)index].SetValue(value);
+                    list[(int)index] = new SerializableKeyValuePair(key, value);
                 else
                 {
                     KeyPositions[key] = (uint)list.Count;
@@ -134,7 +134,7 @@ namespace Breezinstein.Tools
 
         public void Add(KeyValuePair<TKey, TValue> kvp) => Add(kvp.Key, kvp.Value);
 
-        public void Clear() => list.Clear();
+        public void Clear() { list.Clear(); KeyPositions.Clear(); }
         public bool Contains(KeyValuePair<TKey, TValue> kvp) => KeyPositions.ContainsKey(kvp.Key);
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
