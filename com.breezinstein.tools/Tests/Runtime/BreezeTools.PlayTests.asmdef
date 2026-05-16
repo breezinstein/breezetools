@@ -1,0 +1,23 @@
+{
+    "name": "BreezeTools.PlayTests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:ccb8d19ab8918204f861cd99772f7b99",
+        "GUID:f6e14e7f41352ce458310dc3c74dd351",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -67,7 +67,7 @@ namespace Breezinstein.Tools
             set
             {
                 if (KeyPositions.TryGetValue(key, out uint index))
-                    list[(int)index].SetValue(value);
+                    list[(int)index] = new SerializableKeyValuePair(key, value);
                 else
                 {
                     KeyPositions[key] = (uint)list.Count;
