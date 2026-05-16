@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `AudioKeyAttribute` + `AudioKeyDrawer`: decorating a string field with `[AudioKey]`
+  renders an Inspector dropdown populated from every `AudioLibrary` asset in the project.
+- `SceneAttribute` + `SceneAttributeDrawer`: decorating a string field with `[Scene]`
+  renders a dropdown of every scene currently in Build Settings.
+- New `com.breezinstein.tools.spline` sub-assembly with `SplineIsland` (solid extruded
+  mesh with taper, bevel and auto-collider) and `SplineHole` (editor-time hole visuals
+  built from a closed `SplineContainer`). Both compile conditionally via the
+  `BREEZINSTEIN_HAS_SPLINES` define, which is auto-set when `com.unity.splines >= 2.0.0`
+  is installed in the project — so this module adds zero cost for projects that don't
+  use Splines.
+- EditMode tests for the three extracted features:
+  `AudioKeyAttributeTests`, `SceneAttributeTests`, `SplineIslandTests`,
+  `SplineHoleTests`. The Spline test files are guarded by
+  `BREEZINSTEIN_HAS_SPLINES`, so they only compile when the Splines package is present.
+
 ### Changed
 - **Inventory system (Experimental) — complete rework. Breaking change.**
   - `Inventory` is now a plain C# class (not a `ScriptableObject`), making it suitable

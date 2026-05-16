@@ -4,6 +4,7 @@
     "references": [
         "GUID:ccb8d19ab8918204f861cd99772f7b99",
         "GUID:f6e14e7f41352ce458310dc3c74dd351",
+        "GUID:769f6ce72eca4706b797a213304be1f1",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
@@ -19,6 +20,13 @@
     "autoReferenced": false,
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.splines",
+            "expression": "2.0.0",
+            "define": "BREEZINSTEIN_HAS_SPLINES"
+        }
     ],
     "versionDefines": [],
     "noEngineReferences": false
